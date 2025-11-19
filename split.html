@@ -107,6 +107,14 @@
         // Configure PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://esm.sh/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
+        // --- CONSTANTS & UTILS ---
+        const TOOLS = [
+            { name: 'Merge PDF', href: '#' },
+            { name: 'Split PDF', href: '#', active: true },
+            { name: 'Compress PDF', href: '#' },
+            { name: 'Convert PDF', href: '#' },
+            { name: 'All PDF Tools', href: '#' },
+        ];
 
         // --- PDF SERVICE ---
         const loadPDF = async (file) => {
@@ -242,7 +250,7 @@
                                         <line x1="9" y1="15" x2="15" y2="15"></line>
                                     </svg>
                                 </div>
-                                <span className="font-bold text-xl tracking-tight text-gray-700">Snap PDF</span>
+                                <span className="font-bold text-xl tracking-tight text-gray-700">iLovePDF</span>
                             </a>
                         </div>
                         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 uppercase">
