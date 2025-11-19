@@ -492,567 +492,567 @@ th {
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Thin.woff2) format("woff2"), url(/font/Graphik-Thin.woff) format("woff");
+    src: url(Graphik-Thin.woff2) format("woff2"), url(Graphik-Thin.woff) format("woff");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-ThinItalic.woff2) format("woff2"), url(/font/Graphik-ThinItalic.woff) format("woff");
+    src: url(Graphik-ThinItalic.woff2) format("woff2"), url(Graphik-ThinItalic.woff) format("woff");
     font-weight: 100;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Extralight.woff2) format("woff2"), url(/font/Graphik-Extralight.woff) format("woff");
+    src: url(Graphik-Extralight.woff2) format("woff2"), url(Graphik-Extralight.woff) format("woff");
     font-weight: 200;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-ExtralightItalic.woff2) format("woff2"), url(/font/Graphik-ExtralightItalic.woff) format("woff");
+    src: url(Graphik-ExtralightItalic.woff2) format("woff2"), url(Graphik-ExtralightItalic.woff) format("woff");
     font-weight: 200;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Light.woff2) format("woff2"), url(/font/Graphik-Light.woff) format("woff");
+    src: url(Graphik-Light.woff2) format("woff2"), url(Graphik-Light.woff) format("woff");
     font-weight: 300;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-LightItalic.woff2) format("woff2"), url(/font/Graphik-LightItalic.woff) format("woff");
+    src: url(Graphik-LightItalic.woff2) format("woff2"), url(Graphik-LightItalic.woff) format("woff");
     font-weight: 300;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Regular.woff2) format("woff2"), url(/font/Graphik-Regular.woff) format("woff");
+    src: url(Graphik-Regular.woff2) format("woff2"), url(Graphik-Regular.woff) format("woff");
     font-weight: 400;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-RegularItalic.woff2) format("woff2"), url(/font/Graphik-RegularItalic.woff) format("woff");
+    src: url(Graphik-RegularItalic.woff2) format("woff2"), url(Graphik-RegularItalic.woff) format("woff");
     font-weight: 400;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Medium.woff2) format("woff2"), url(/font/Graphik-Medium.woff) format("woff");
+    src: url(Graphik-Medium.woff2) format("woff2"), url(Graphik-Medium.woff) format("woff");
     font-weight: 500;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-MediumItalic.woff2) format("woff2"), url(/font/Graphik-MediumItalic.woff) format("woff");
+    src: url(Graphik-MediumItalic.woff2) format("woff2"), url(Graphik-MediumItalic.woff) format("woff");
     font-weight: 500;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Semibold.woff2) format("woff2"), url(/font/Graphik-Semibold.woff) format("woff");
+    src: url(Graphik-Semibold.woff2) format("woff2"), url(Graphik-Semibold.woff) format("woff");
     font-weight: 600;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-SemiboldItalic.woff2) format("woff2"), url(/font/Graphik-SemiboldItalic.woff) format("woff");
+    src: url(Graphik-SemiboldItalic.woff2) format("woff2"), url(Graphik-SemiboldItalic.woff) format("woff");
     font-weight: 600;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Bold.woff2) format("woff2"), url(/font/Graphik-Bold.woff) format("woff");
+    src: url(Graphik-Bold.woff2) format("woff2"), url(Graphik-Bold.woff) format("woff");
     font-weight: 700;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-BoldItalic.woff2) format("woff2"), url(/font/Graphik-BoldItalic.woff) format("woff");
+    src: url(Graphik-BoldItalic.woff2) format("woff2"), url(Graphik-BoldItalic.woff) format("woff");
     font-weight: 700;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Black.woff2) format("woff2"), url(/font/Graphik-Black.woff) format("woff");
+    src: url(Graphik-Black.woff2) format("woff2"), url(Graphik-Black.woff) format("woff");
     font-weight: 800;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-BlackItalic.woff2) format("woff2"), url(/font/Graphik-BlackItalic.woff) format("woff");
+    src: url(Graphik-BlackItalic.woff2) format("woff2"), url(Graphik-BlackItalic.woff) format("woff");
     font-weight: 800;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-Super.woff2) format("woff2"), url(/font/Graphik-Super.woff) format("woff");
+    src: url(Graphik-Super.woff2) format("woff2"), url(Graphik-Super.woff) format("woff");
     font-weight: 900;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik;
-    src: url(/font/Graphik-SuperItalic.woff2) format("woff2"), url(/font/Graphik-SuperItalic.woff) format("woff");
+    src: url(Graphik-SuperItalic.woff2) format("woff2"), url(Graphik-SuperItalic.woff) format("woff");
     font-weight: 900;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Thin.woff2) format("woff2"), url(/font/GraphikLC-Thin.woff) format("woff");
+    src: url(GraphikLC-Thin.woff2) format("woff2"), url(GraphikLC-Thin.woff) format("woff");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-ThinItalic.woff2) format("woff2"), url(/font/GraphikLC-ThinItalic.woff) format("woff");
+    src: url(GraphikLC-ThinItalic.woff2) format("woff2"), url(GraphikLC-ThinItalic.woff) format("woff");
     font-weight: 100;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Extralight.woff2) format("woff2"), url(/font/GraphikLC-Extralight.woff) format("woff");
+    src: url(GraphikLC-Extralight.woff2) format("woff2"), url(GraphikLC-Extralight.woff) format("woff");
     font-weight: 200;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-ExtralightItalic.woff2) format("woff2"), url(/font/GraphikLC-ExtralightItalic.woff) format("woff");
+    src: url(GraphikLC-ExtralightItalic.woff2) format("woff2"), url(GraphikLC-ExtralightItalic.woff) format("woff");
     font-weight: 200;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Light.woff2) format("woff2"), url(/font/GraphikLC-Light.woff) format("woff");
+    src: url(GraphikLC-Light.woff2) format("woff2"), url(GraphikLC-Light.woff) format("woff");
     font-weight: 300;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-LightItalic.woff2) format("woff2"), url(/font/GraphikLC-LightItalic.woff) format("woff");
+    src: url(GraphikLC-LightItalic.woff2) format("woff2"), url(GraphikLC-LightItalic.woff) format("woff");
     font-weight: 300;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Regular.woff2) format("woff2"), url(/font/GraphikLC-Regular.woff) format("woff");
+    src: url(GraphikLC-Regular.woff2) format("woff2"), url(GraphikLC-Regular.woff) format("woff");
     font-weight: 400;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-RegularItalic.woff2) format("woff2"), url(/font/GraphikLC-RegularItalic.woff) format("woff");
+    src: url(GraphikLC-RegularItalic.woff2) format("woff2"), url(GraphikLC-RegularItalic.woff) format("woff");
     font-weight: 400;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Medium.woff2) format("woff2"), url(/font/GraphikLC-Medium.woff) format("woff");
+    src: url(GraphikLC-Medium.woff2) format("woff2"), url(GraphikLC-Medium.woff) format("woff");
     font-weight: 500;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-MediumItalic.woff2) format("woff2"), url(/font/GraphikLC-MediumItalic.woff) format("woff");
+    src: url(GraphikLC-MediumItalic.woff2) format("woff2"), url(GraphikLC-MediumItalic.woff) format("woff");
     font-weight: 500;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Semibold.woff2) format("woff2"), url(/font/GraphikLC-Semibold.woff) format("woff");
+    src: url(GraphikLC-Semibold.woff2) format("woff2"), url(GraphikLC-Semibold.woff) format("woff");
     font-weight: 600;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-SemiboldItalic.woff2) format("woff2"), url(/font/GraphikLC-SemiboldItalic.woff) format("woff");
+    src: url(GraphikLC-SemiboldItalic.woff2) format("woff2"), url(GraphikLC-SemiboldItalic.woff) format("woff");
     font-weight: 600;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Bold.woff2) format("woff2"), url(/font/GraphikLC-Bold.woff) format("woff");
+    src: url(GraphikLC-Bold.woff2) format("woff2"), url(GraphikLC-Bold.woff) format("woff");
     font-weight: 700;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-BoldItalic.woff2) format("woff2"), url(/font/GraphikLC-BoldItalic.woff) format("woff");
+    src: url(GraphikLC-BoldItalic.woff2) format("woff2"), url(GraphikLC-BoldItalic.woff) format("woff");
     font-weight: 700;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Black.woff2) format("woff2"), url(/font/GraphikLC-Black.woff) format("woff");
+    src: url(GraphikLC-Black.woff2) format("woff2"), url(GraphikLC-Black.woff) format("woff");
     font-weight: 800;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-BlackItalic.woff2) format("woff2"), url(/font/GraphikLC-BlackItalic.woff) format("woff");
+    src: url(GraphikLC-BlackItalic.woff2) format("woff2"), url(GraphikLC-BlackItalic.woff) format("woff");
     font-weight: 800;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-Super.woff2) format("woff2"), url(/font/GraphikLC-Super.woff) format("woff");
+    src: url(GraphikLC-Super.woff2) format("woff2"), url(GraphikLC-Super.woff) format("woff");
     font-weight: 900;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LC;
-    src: url(/font/GraphikLC-SuperItalic.woff2) format("woff2"), url(/font/GraphikLC-SuperItalic.woff) format("woff");
+    src: url(GraphikLC-SuperItalic.woff2) format("woff2"), url(GraphikLC-SuperItalic.woff) format("woff");
     font-weight: 900;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Thin.woff2) format("woff2"), url(/font/GraphikLG-Thin.woff) format("woff");
+    src: url(GraphikLG-Thin.woff2) format("woff2"), url(GraphikLG-Thin.woff) format("woff");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-ThinItalic.woff2) format("woff2"), url(/font/GraphikLG-ThinItalic.woff) format("woff");
+    src: url(GraphikLG-ThinItalic.woff2) format("woff2"), url(GraphikLG-ThinItalic.woff) format("woff");
     font-weight: 100;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Extralight.woff2) format("woff2"), url(/font/GraphikLG-Extralight.woff) format("woff");
+    src: url(GraphikLG-Extralight.woff2) format("woff2"), url(GraphikLG-Extralight.woff) format("woff");
     font-weight: 200;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-ExtralightItalic.woff2) format("woff2"), url(/font/GraphikLG-ExtralightItalic.woff) format("woff");
+    src: url(GraphikLG-ExtralightItalic.woff2) format("woff2"), url(GraphikLG-ExtralightItalic.woff) format("woff");
     font-weight: 200;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Light.woff2) format("woff2"), url(/font/GraphikLG-Light.woff) format("woff");
+    src: url(GraphikLG-Light.woff2) format("woff2"), url(GraphikLG-Light.woff) format("woff");
     font-weight: 300;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-LightItalic.woff2) format("woff2"), url(/font/GraphikLG-LightItalic.woff) format("woff");
+    src: url(GraphikLG-LightItalic.woff2) format("woff2"), url(GraphikLG-LightItalic.woff) format("woff");
     font-weight: 300;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Regular.woff2) format("woff2"), url(/font/GraphikLG-Regular.woff) format("woff");
+    src: url(GraphikLG-Regular.woff2) format("woff2"), url(GraphikLG-Regular.woff) format("woff");
     font-weight: 400;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-RegularItalic.woff2) format("woff2"), url(/font/GraphikLG-RegularItalic.woff) format("woff");
+    src: url(GraphikLG-RegularItalic.woff2) format("woff2"), url(GraphikLG-RegularItalic.woff) format("woff");
     font-weight: 400;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Medium.woff2) format("woff2"), url(/font/GraphikLG-Medium.woff) format("woff");
+    src: url(GraphikLG-Medium.woff2) format("woff2"), url(GraphikLG-Medium.woff) format("woff");
     font-weight: 500;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-MediumItalic.woff2) format("woff2"), url(/font/GraphikLG-MediumItalic.woff) format("woff");
+    src: url(GraphikLG-MediumItalic.woff2) format("woff2"), url(GraphikLG-MediumItalic.woff) format("woff");
     font-weight: 500;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Semibold.woff2) format("woff2"), url(/font/GraphikLG-Semibold.woff) format("woff");
+    src: url(GraphikLG-Semibold.woff2) format("woff2"), url(GraphikLG-Semibold.woff) format("woff");
     font-weight: 600;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-SemiboldItalic.woff2) format("woff2"), url(/font/GraphikLG-SemiboldItalic.woff) format("woff");
+    src: url(GraphikLG-SemiboldItalic.woff2) format("woff2"), url(GraphikLG-SemiboldItalic.woff) format("woff");
     font-weight: 600;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Bold.woff2) format("woff2"), url(/font/GraphikLG-Bold.woff) format("woff");
+    src: url(GraphikLG-Bold.woff2) format("woff2"), url(GraphikLG-Bold.woff) format("woff");
     font-weight: 700;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-BoldItalic.woff2) format("woff2"), url(/font/GraphikLG-BoldItalic.woff) format("woff");
+    src: url(GraphikLG-BoldItalic.woff2) format("woff2"), url(GraphikLG-BoldItalic.woff) format("woff");
     font-weight: 700;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Black.woff2) format("woff2"), url(/font/GraphikLG-Black.woff) format("woff");
+    src: url(GraphikLG-Black.woff2) format("woff2"), url(GraphikLG-Black.woff) format("woff");
     font-weight: 800;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-BlackItalic.woff2) format("woff2"), url(/font/GraphikLG-BlackItalic.woff) format("woff");
+    src: url(GraphikLG-BlackItalic.woff2) format("woff2"), url(GraphikLG-BlackItalic.woff) format("woff");
     font-weight: 800;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-Super.woff2) format("woff2"), url(/font/GraphikLG-Super.woff) format("woff");
+    src: url(GraphikLG-Super.woff2) format("woff2"), url(GraphikLG-Super.woff) format("woff");
     font-weight: 900;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik LG;
-    src: url(/font/GraphikLG-SuperItalic.woff2) format("woff2"), url(/font/GraphikLG-SuperItalic.woff) format("woff");
+    src: url(GraphikLG-SuperItalic.woff2) format("woff2"), url(GraphikLG-SuperItalic.woff) format("woff");
     font-weight: 900;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Thin.woff2) format("woff2"), url(/font/GraphikAR-Thin.woff) format("woff");
+    src: url(GraphikAR-Thin.woff2) format("woff2"), url(GraphikAR-Thin.woff) format("woff");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Extralight.woff2) format("woff2"), url(/font/GraphikAR-Extralight.woff) format("woff");
+    src: url(GraphikAR-Extralight.woff2) format("woff2"), url(GraphikAR-Extralight.woff) format("woff");
     font-weight: 200;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Light.woff2) format("woff2"), url(/font/GraphikAR-Light.woff) format("woff");
+    src: url(GraphikAR-Light.woff2) format("woff2"), url(GraphikAR-Light.woff) format("woff");
     font-weight: 300;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Regular.woff2) format("woff2"), url(/font/GraphikAR-Regular.woff) format("woff");
+    src: url(GraphikAR-Regular.woff2) format("woff2"), url(GraphikAR-Regular.woff) format("woff");
     font-weight: 400;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Medium.woff2) format("woff2"), url(/font/GraphikAR-Medium.woff) format("woff");
+    src: url(GraphikAR-Medium.woff2) format("woff2"), url(GraphikAR-Medium.woff) format("woff");
     font-weight: 500;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Semibold.woff2) format("woff2"), url(/font/GraphikAR-Semibold.woff) format("woff");
+    src: url(GraphikAR-Semibold.woff2) format("woff2"), url(GraphikAR-Semibold.woff) format("woff");
     font-weight: 600;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Bold.woff2) format("woff2"), url(/font/GraphikAR-Bold.woff) format("woff");
+    src: url(GraphikAR-Bold.woff2) format("woff2"), url(GraphikAR-Bold.woff) format("woff");
     font-weight: 700;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Black.woff2) format("woff2"), url(/font/GraphikAR-Black.woff) format("woff");
+    src: url(GraphikAR-Black.woff2) format("woff2"), url(GraphikAR-Black.woff) format("woff");
     font-weight: 800;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik AR;
-    src: url(/font/GraphikAR-Super.woff2) format("woff2"), url(/font/GraphikAR-Super.woff) format("woff");
+    src: url(GraphikAR-Super.woff2) format("woff2"), url(GraphikAR-Super.woff) format("woff");
     font-weight: 900;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Thin.woff2) format("woff2"), url(/font/GraphikTH-Thin.woff) format("woff");
+    src: url(GraphikTH-Thin.woff2) format("woff2"), url(GraphikTH-Thin.woff) format("woff");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-ThinItalic.woff2) format("woff2"), url(/font/GraphikTH-ThinItalic.woff) format("woff");
+    src: url(GraphikTH-ThinItalic.woff2) format("woff2"), url(GraphikTH-ThinItalic.woff) format("woff");
     font-weight: 100;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Extralight.woff2) format("woff2"), url(/font/GraphikTH-Extralight.woff) format("woff");
+    src: url(GraphikTH-Extralight.woff2) format("woff2"), url(GraphikTH-Extralight.woff) format("woff");
     font-weight: 200;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-ExtralightItalic.woff2) format("woff2"), url(/font/GraphikTH-ExtralightItalic.woff) format("woff");
+    src: url(GraphikTH-ExtralightItalic.woff2) format("woff2"), url(GraphikTH-ExtralightItalic.woff) format("woff");
     font-weight: 200;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Light.woff2) format("woff2"), url(/font/GraphikTH-Light.woff) format("woff");
+    src: url(GraphikTH-Light.woff2) format("woff2"), url(GraphikTH-Light.woff) format("woff");
     font-weight: 300;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-LightItalic.woff2) format("woff2"), url(/font/GraphikTH-LightItalic.woff) format("woff");
+    src: url(GraphikTH-LightItalic.woff2) format("woff2"), url(GraphikTH-LightItalic.woff) format("woff");
     font-weight: 300;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Regular.woff2) format("woff2"), url(/font/GraphikTH-Regular.woff) format("woff");
+    src: url(GraphikTH-Regular.woff2) format("woff2"), url(GraphikTH-Regular.woff) format("woff");
     font-weight: 400;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-RegularItalic.woff2) format("woff2"), url(/font/GraphikTH-RegularItalic.woff) format("woff");
+    src: url(GraphikTH-RegularItalic.woff2) format("woff2"), url(GraphikTH-RegularItalic.woff) format("woff");
     font-weight: 400;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Medium.woff2) format("woff2"), url(/font/GraphikTH-Medium.woff) format("woff");
+    src: url(GraphikTH-Medium.woff2) format("woff2"), url(GraphikTH-Medium.woff) format("woff");
     font-weight: 500;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-MediumItalic.woff2) format("woff2"), url(/font/GraphikTH-MediumItalic.woff) format("woff");
+    src: url(GraphikTH-MediumItalic.woff2) format("woff2"), url(GraphikTH-MediumItalic.woff) format("woff");
     font-weight: 500;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Semibold.woff2) format("woff2"), url(/font/GraphikTH-Semibold.woff) format("woff");
+    src: url(GraphikTH-Semibold.woff2) format("woff2"), url(GraphikTH-Semibold.woff) format("woff");
     font-weight: 600;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-SemiboldItalic.woff2) format("woff2"), url(/font/GraphikTH-SemiboldItalic.woff) format("woff");
+    src: url(GraphikTH-SemiboldItalic.woff2) format("woff2"), url(GraphikTH-SemiboldItalic.woff) format("woff");
     font-weight: 600;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Bold.woff2) format("woff2"), url(/font/GraphikTH-Bold.woff) format("woff");
+    src: url(GraphikTH-Bold.woff2) format("woff2"), url(GraphikTH-Bold.woff) format("woff");
     font-weight: 700;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-BoldItalic.woff2) format("woff2"), url(/font/GraphikTH-BoldItalic.woff) format("woff");
+    src: url(GraphikTH-BoldItalic.woff2) format("woff2"), url(GraphikTH-BoldItalic.woff) format("woff");
     font-weight: 700;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Black.woff2) format("woff2"), url(/font/GraphikTH-Black.woff) format("woff");
+    src: url(GraphikTH-Black.woff2) format("woff2"), url(GraphikTH-Black.woff) format("woff");
     font-weight: 800;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-BlackItalic.woff2) format("woff2"), url(/font/GraphikTH-BlackItalic.woff) format("woff");
+    src: url(GraphikTH-BlackItalic.woff2) format("woff2"), url(GraphikTH-BlackItalic.woff) format("woff");
     font-weight: 800;
     font-style: italic
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-Super.woff2) format("woff2"), url(/font/GraphikTH-Super.woff) format("woff");
+    src: url(GraphikTH-Super.woff2) format("woff2"), url(GraphikTH-Super.woff) format("woff");
     font-weight: 900;
     font-style: normal
 }
 
 @font-face {
     font-family: Graphik TH;
-    src: url(/font/GraphikTH-SuperItalic.woff2) format("woff2"), url(/font/GraphikTH-SuperItalic.woff) format("woff");
+    src: url(GraphikTH-SuperItalic.woff2) format("woff2"), url(GraphikTH-SuperItalic.woff) format("woff");
     font-weight: 900;
     font-style: italic
 }
