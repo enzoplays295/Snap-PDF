@@ -9068,7 +9068,7 @@ button.mat-icon-button:disabled {
         content: "";
         width: 24px;
         height: 24px;
-        background-image: url(/img/icons/svg-icons/arrow-down.svg);
+        background-image: url(arrow-down.svg);
         background-repeat: no-repeat;
         background-position: 50%
     }
@@ -9879,33 +9879,6 @@ button.mat-icon-button:disabled {
     background-color: rgba(0, 0, 0, 0)
 }
 
-.social__item--twitter {
-    background-image: url(/img/svg_icons/twitter.svg)
-}
-
-.social__item--facebook {
-    background-image: url(/img/svg_icons/facebook.svg)
-}
-
-.social__item--android {
-    background-image: url(/img/svg_icons/android.svg)
-}
-
-.social__item--apple {
-    background-image: url(/img/svg_icons/apple.svg)
-}
-
-.social__item--linkedin {
-    background-image: url(/img/svg_icons/linkedin.svg)
-}
-
-.social__item--tiktok {
-    background-image: url(/img/svg_icons/tiktok.svg)
-}
-
-.social__item--instagram {
-    background-image: url(/img/svg_icons/instagram.svg)
-}
 
 .social__item:hover {
     opacity: 1
@@ -12756,7 +12729,7 @@ body.rtl [next-from-confirm-files-yes] {
 }
 
 .tools__item.workflows {
-    background: #fde4df url(/img/workflows/workflows-bg.svg) no-repeat 100%;
+    background: #fde4df url(workflows-bg.svg) no-repeat 100%;
     background-size: contain;
     -webkit-box-shadow: none;
     box-shadow: none
@@ -13278,11 +13251,11 @@ body.rtl [next-from-confirm-files-yes] {
 }
 
 .listcheck__item--ok:before {
-    background: url(/img/items/ok_sm.svg) no-repeat 50%
+    background: url(ok_sm.svg) no-repeat 50%
 }
 
 .listcheck__item--fail:before {
-    background: url(/img/items/fail_sm.svg) no-repeat 50%
+    background: url(fail_sm.svg) no-repeat 50%
 }
 
 .listcheck__item--md:before {
@@ -13293,11 +13266,11 @@ body.rtl [next-from-confirm-files-yes] {
 }
 
 .listcheck__item--md--ok:before {
-    background: url(/img/items/ok_md.svg) no-repeat 50%
+    background: url(ok_md.svg) no-repeat 50%
 }
 
 .listcheck__item--md--fail:before {
-    background: url(/img/items/fail_md.svg) no-repeat 50%
+    background: url(fail_md.svg) no-repeat 50%
 }
 
 .listcheck__item .title3 {
@@ -13353,7 +13326,7 @@ body.rtl [next-from-confirm-files-yes] {
     position: fixed;
     background-position: 50%;
     background-size: 100% auto;
-    background-image: url(/img/bg/background.svg)
+    background-image: url(background.svg)
 }
 
 .home .block__container {
@@ -13759,7 +13732,7 @@ header .menu .nav-dropdown .ico {
 }
 
 .ico--interactive {
-    background: url(/img/icons/interactive.svg) no-repeat 50%
+    background: url(interactive.svg) no-repeat 50%
 }
 
 @media (max-width:1160px) {
