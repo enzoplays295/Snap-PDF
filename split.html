@@ -83,7 +83,8 @@
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
         "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0",
         "pdf-lib": "https://esm.sh/pdf-lib@1.17.1",
-        "jszip": "https://esm.sh/jszip@3.10.1"
+        "jszip": "https://esm.sh/jszip@3.10.1",
+        "pdfjs-dist": "https://esm.sh/pdfjs-dist@3.11.174"
       }
     }
     </script>
@@ -101,6 +102,10 @@
         } from 'lucide-react';
         import { PDFDocument } from 'pdf-lib';
         import JSZip from 'jszip';
+        import * as pdfjsLib from 'pdfjs-dist';
+
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://esm.sh/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
         // --- CONSTANTS & UTILS ---
         const TOOLS = [
@@ -296,6 +301,86 @@
             </footer>
         );
 
+        // --- PDF THUMBNAIL COMPONENT ---
+        
+        const PDFThumb = ({ file, pageNum, isSelected, onClick }) => {
+            const canvasRef = useRef(null);
+            const [loading, setLoading] = useState(true);
+            
+            useEffect(() => {
+                let isMounted = true;
+                const renderPage = async () => {
+                    if (!file) return;
+                    
+                    try {
+                        const arrayBuffer = await file.arrayBuffer();
+                        // In production we should ideally cache the loaded doc, but for this snippet we load it per component or cache in parent
+                        // To be efficient, we rely on pdfjs internal caching or basic buffering. 
+                        // For a split tool, generating thumbnails for potentially huge PDFs can be heavy.
+                        // We will load the document once in the parent? No, the parent has 'file' object.
+                        // Let's load just this page.
+                        
+                        // Note: Loading the whole document for every thumbnail is inefficient. 
+                        // Ideally the `pdfDoc` should be passed down or cached.
+                        // However, to keep single-file simplicity without complex contexts:
+                        const loadingTask = pdfjsLib.getDocument(new Uint8Array(arrayBuffer));
+                        const pdf = await loadingTask.promise;
+                        
+                        if(!isMounted) return;
+                        
+                        const page = await pdf.getPage(pageNum);
+                        const viewport = page.getViewport({ scale: 0.3 }); // Low scale for thumbnail
+                        
+                        const canvas = canvasRef.current;
+                        if (canvas) {
+                            const context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+                            
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            await page.render(renderContext).promise;
+                        }
+                        if(isMounted) setLoading(false);
+                        
+                        // Clean up
+                        // pdf.destroy(); 
+                    } catch (err) {
+                        console.error(err);
+                        if(isMounted) setLoading(false);
+                    }
+                };
+                
+                renderPage();
+                return () => { isMounted = false; };
+            }, [file, pageNum]);
+
+            return (
+                <div 
+                    onClick={onClick}
+                    className={`relative aspect-[3/4] bg-white rounded shadow cursor-pointer transition-all border-2 flex flex-col items-center justify-center group overflow-hidden ${isSelected ? 'border-brand-red ring-2 ring-brand-red ring-opacity-20' : 'border-transparent hover:border-gray-300'}`}
+                >
+                    {loading ? (
+                        <div className="animate-spin text-gray-300">
+                            <Loader2 size={24} />
+                        </div>
+                    ) : (
+                        <canvas ref={canvasRef} className="w-full h-full object-contain" />
+                    )}
+                    
+                    <div className="absolute bottom-0 left-0 w-full bg-black/50 text-white text-xs py-1 text-center">
+                        {pageNum}
+                    </div>
+
+                    <div className={`absolute top-2 right-2 w-6 h-6 rounded-full border flex items-center justify-center transition-colors z-10 shadow-sm ${isSelected ? 'bg-brand-red border-brand-red' : 'bg-white border-gray-300 group-hover:border-brand-red'}`}>
+                        <Check size={14} className={`text-white ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+                    </div>
+                </div>
+            );
+        };
+
         // --- SPLIT TOOL MAIN COMPONENT ---
 
         const SplitTool = () => {
@@ -481,35 +566,19 @@
                 </div>
             );
 
-            const PageGrid = () => {
-                const togglePage = (pageNum) => {
-                    const newSet = new Set(selectedPages);
-                    if (newSet.has(pageNum)) newSet.delete(pageNum);
-                    else newSet.add(pageNum);
-                    setSelectedPages(newSet);
-                };
-
+            const PageGrid = ({ file, pageCount, selectedPages, onTogglePage }) => {
                 return (
                     <div className="p-4 h-full overflow-y-auto bg-brand-light">
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-5xl mx-auto pb-20">
-                            {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => {
-                                const isSelected = selectedPages.has(page);
-                                return (
-                                    <div 
-                                        key={page}
-                                        onClick={() => togglePage(page)}
-                                        className={`relative aspect-[3/4] bg-white rounded shadow cursor-pointer transition-all border-2 flex flex-col items-center justify-center group ${isSelected ? 'border-brand-red ring-2 ring-brand-red ring-opacity-20' : 'border-transparent hover:border-gray-300'}`}
-                                    >
-                                        <div className="text-gray-400 font-bold text-2xl select-none">
-                                            {page}
-                                        </div>
-                                        <div className={`absolute top-2 right-2 w-6 h-6 rounded-full border flex items-center justify-center transition-colors ${isSelected ? 'bg-brand-red border-brand-red' : 'bg-white border-gray-300 group-hover:border-brand-red'}`}>
-                                            <Check size={14} className={`text-white ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
-                                        </div>
-                                        <div className="absolute bottom-2 text-xs text-gray-400 font-medium">Page {page}</div>
-                                    </div>
-                                );
-                            })}
+                            {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => (
+                                <PDFThumb 
+                                    key={page}
+                                    file={file}
+                                    pageNum={page}
+                                    isSelected={selectedPages.has(page)}
+                                    onClick={() => onTogglePage(page)}
+                                />
+                            ))}
                         </div>
                     </div>
                 );
@@ -622,7 +691,17 @@
                         )}
 
                         {mainTab === 'EXTRACT' && extractMode === 'SELECT' && (
-                            <PageGrid />
+                            <PageGrid 
+                                file={file} 
+                                pageCount={pageCount} 
+                                selectedPages={selectedPages} 
+                                onTogglePage={(pageNum) => {
+                                    const newSet = new Set(selectedPages);
+                                    if (newSet.has(pageNum)) newSet.delete(pageNum);
+                                    else newSet.add(pageNum);
+                                    setSelectedPages(newSet);
+                                }} 
+                            />
                         )}
 
                         {mainTab === 'EXTRACT' && extractMode === 'ALL' && (
