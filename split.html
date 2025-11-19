@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Split PDF files online. Free service to split PDF</title>
-    <meta name="description" content="Split a PDF file by page ranges or extract all PDF pages to multiple PDF files. Split or extract PDF files online, easily and free." />
+    <meta name="description" content="Split a PDF file by page ranges or extract all PDF pages to multiple PDF files." />
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -47,10 +47,6 @@
         /* Animations */
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .tool-workspace {
-            height: calc(100vh - 60px);
-        }
-        
         /* Checkbox Custom Styling */
         .custom-checkbox {
             width: 18px;
@@ -79,20 +75,18 @@
         }
     </style>
 
-    <!-- Import Map -->
+    <!-- Import Map for Modules -->
     <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0",
-    "pdf-lib": "https://esm.sh/pdf-lib@1.17.1",
-    "jszip": "https://esm.sh/jszip@3.10.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/"
-  }
-}
-</script>
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0",
+        "pdf-lib": "https://esm.sh/pdf-lib@1.17.1",
+        "jszip": "https://esm.sh/jszip@3.10.1"
+      }
+    }
+    </script>
 </head>
 <body>
     <div id="root"></div>
@@ -108,6 +102,14 @@
         import { PDFDocument } from 'pdf-lib';
         import JSZip from 'jszip';
 
+        // --- CONSTANTS & UTILS ---
+        const TOOLS = [
+            { name: 'Merge PDF', href: '#' },
+            { name: 'Split PDF', href: '#', active: true },
+            { name: 'Compress PDF', href: '#' },
+            { name: 'Convert PDF', href: '#' },
+            { name: 'All PDF Tools', href: '#' },
+        ];
 
         // --- PDF SERVICE ---
         const loadPDF = async (file) => {
@@ -158,7 +160,10 @@
                             if (i >= 1 && i <= pageCount) allIndices.push(i - 1);
                         }
                     });
-                    const result = await saveSubset(allIndices, 'split_merged');
+                    // Dedup and sort
+                    const uniqueIndices = [...new Set(allIndices)].sort((a, b) => a - b);
+                    
+                    const result = await saveSubset(uniqueIndices, 'split_merged');
                     return new Blob([result.data], { type: 'application/pdf' });
                 } else {
                     // Separate files per range
@@ -240,7 +245,7 @@
                                         <line x1="9" y1="15" x2="15" y2="15"></line>
                                     </svg>
                                 </div>
-                                <span className="font-bold text-xl tracking-tight text-gray-700">Snap PDF</span>
+                                <span className="font-bold text-xl tracking-tight text-gray-700">iLovePDF</span>
                             </a>
                         </div>
                         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 uppercase">
@@ -254,7 +259,14 @@
                                 </a>
                             ))}
                         </nav>
-                        
+                        <div className="hidden md:flex items-center gap-4">
+                            <a href="#" className="text-gray-600 hover:text-brand-red text-sm font-semibold">Login</a>
+                            <a href="#" className="bg-brand-gray text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold">Sign up</a>
+                        </div>
+                        <button className="md:hidden text-gray-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
                     {isMenuOpen && (
                         <div className="absolute top-[60px] left-0 w-full bg-white border-t border-gray-100 shadow-lg p-4 flex flex-col gap-4 md:hidden z-50">
                             {TOOLS.map(tool => (
@@ -477,14 +489,6 @@
                     setSelectedPages(newSet);
                 };
 
-                // Select All / Clear
-                useEffect(() => {
-                    if (extractMode === 'SELECT') {
-                        // Initially select none or keep selection? iLovePDF clears.
-                        // We'll keep state if user switches tabs back and forth
-                    }
-                }, [extractMode]);
-
                 return (
                     <div className="p-4 h-full overflow-y-auto bg-brand-light">
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-5xl mx-auto pb-20">
@@ -513,7 +517,7 @@
 
             // --- RENDER STATES ---
 
-            if (files === null && file === null) { // Landing
+            if (file === null) { // Landing
                 return (
                     <div 
                         className="flex flex-col items-center justify-center min-h-[calc(100vh-140px)] p-6"
