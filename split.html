@@ -44,9 +44,6 @@
         ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #999; }
         
-        /* Animations */
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
         /* Checkbox Custom Styling */
         .custom-checkbox {
             width: 18px;
@@ -104,13 +101,18 @@
         import JSZip from 'jszip';
         import * as pdfjsProxy from 'pdfjs-dist';
 
-        // Handle potential default export wrapping from esm.sh
+        // --- PDF.js WORKER SETUP ---
+        // Robust handling for default exports vs named exports from CDN
         const pdfjsLib = pdfjsProxy.default || pdfjsProxy;
+        
+        // Ensure GlobalWorkerOptions exists before assignment
+        if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://esm.sh/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+        } else {
+            console.warn("PDF.js GlobalWorkerOptions not found. Thumbnails might not render.");
+        }
 
-        // Configure PDF.js worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://esm.sh/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-
-        // --- CONSTANTS & UTILS ---
+        // --- CONSTANTS ---
         const TOOLS = [
             { name: 'Merge PDF', href: '#' },
             { name: 'Split PDF', href: '#', active: true },
@@ -119,21 +121,9 @@
             { name: 'All PDF Tools', href: '#' },
         ];
 
-        // --- PDF SERVICE ---
-        const loadPDF = async (file) => {
-            try {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdfDoc = await PDFDocument.load(arrayBuffer);
-                return {
-                    pageCount: pdfDoc.getPageCount(),
-                    pdfDoc // Keep the loaded doc for processing
-                };
-            } catch (error) {
-                console.error("Error loading PDF", error);
-                throw new Error("Invalid PDF file");
-            }
-        };
-
+        // --- PDF LOGIC ---
+        
+        // Helper to split PDF using pdf-lib
         const splitPDF = async (file, options) => {
             // Options: { mode: 'RANGES'|'FIXED'|'EXTRACT_ALL'|'EXTRACT_SELECT', ranges: [], fixedRange: 1, selectedPages: [], merge: boolean }
             const arrayBuffer = await file.arrayBuffer();
@@ -144,7 +134,7 @@
             const filename = file.name.replace('.pdf', '');
             let createdFiles = 0;
 
-            // Helper to save a subset of pages as a new PDF
+            // Internal helper to save a subset
             const saveSubset = async (pageIndices, suffix) => {
                 const newDoc = await PDFDocument.create();
                 const copiedPages = await newDoc.copyPages(srcDoc, pageIndices);
@@ -158,23 +148,21 @@
 
             // 1. SPLIT BY RANGES (CUSTOM)
             if (options.mode === 'RANGES') {
-                const ranges = options.ranges; // Array of {from, to}
+                const ranges = options.ranges;
                 
                 if (options.merge) {
-                    // Merge all defined ranges into ONE file
                     const allIndices = [];
                     ranges.forEach(r => {
                         for (let i = r.from; i <= r.to; i++) {
                             if (i >= 1 && i <= pageCount) allIndices.push(i - 1);
                         }
                     });
-                    // Dedup and sort
                     const uniqueIndices = [...new Set(allIndices)].sort((a, b) => a - b);
+                    if (uniqueIndices.length === 0) throw new Error("Invalid ranges");
                     
                     const result = await saveSubset(uniqueIndices, 'split_merged');
                     return new Blob([result.data], { type: 'application/pdf' });
                 } else {
-                    // Separate files per range
                     for (let i = 0; i < ranges.length; i++) {
                         const r = ranges[i];
                         const indices = [];
@@ -190,7 +178,7 @@
                 }
             }
 
-            // 2. FIXED RANGE (Split every N pages)
+            // 2. FIXED RANGE
             else if (options.mode === 'FIXED') {
                 const step = Math.max(1, parseInt(options.fixedRange));
                 for (let i = 0; i < pageCount; i += step) {
@@ -204,7 +192,7 @@
                 }
             }
 
-            // 3. EXTRACT ALL PAGES
+            // 3. EXTRACT ALL
             else if (options.mode === 'EXTRACT_ALL') {
                 for (let i = 0; i < pageCount; i++) {
                     const result = await saveSubset([i], `page_${i + 1}`);
@@ -213,10 +201,9 @@
                 }
             }
 
-            // 4. EXTRACT SELECTED PAGES
+            // 4. EXTRACT SELECTED
             else if (options.mode === 'EXTRACT_SELECT') {
                 const selected = options.selectedPages.sort((a, b) => a - b);
-                
                 if (options.merge) {
                     const indices = selected.map(p => p - 1);
                     if (indices.length === 0) throw new Error("No pages selected");
@@ -231,12 +218,11 @@
                 }
             }
 
-            // If we reach here, we return a ZIP (unless merged handled above)
-            if (createdFiles === 0) throw new Error("No pages generated");
+            if (createdFiles === 0) throw new Error("No pages generated. Check your selection.");
             return await zip.generateAsync({ type: "blob" });
         };
 
-        // --- COMPONENTS ---
+        // --- UI COMPONENTS ---
 
         const Header = () => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -267,7 +253,20 @@
                                 </a>
                             ))}
                         </nav>
-                        
+                        <div className="hidden md:flex items-center gap-4">
+                            {/* Login/Signup removed as requested */}
+                        </div>
+                        <button className="md:hidden text-gray-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
+                    {isMenuOpen && (
+                        <div className="absolute top-[60px] left-0 w-full bg-white border-t border-gray-100 shadow-lg p-4 flex flex-col gap-4 md:hidden z-50">
+                            {TOOLS.map(tool => (
+                                <a key={tool.name} href={tool.href} className={tool.active ? 'text-brand-red font-semibold' : 'text-gray-600'}>{tool.name}</a>
+                            ))}
+                        </div>
+                    )}
                 </header>
             );
         };
@@ -287,35 +286,29 @@
             </footer>
         );
 
-        // --- PDF THUMBNAIL COMPONENT ---
-        
-        const PDFThumb = ({ file, pageNum, isSelected, onClick }) => {
+        // Component to render a single page thumbnail using PDF.js
+        const PDFThumb = ({ fileUrl, pageNum, isSelected, onClick }) => {
             const canvasRef = useRef(null);
             const [loading, setLoading] = useState(true);
             
             useEffect(() => {
                 let isMounted = true;
+                let pdfDoc = null;
+
                 const renderPage = async () => {
-                    if (!file) return;
+                    if (!fileUrl) return;
                     
                     try {
-                        const arrayBuffer = await file.arrayBuffer();
-                        // In production we should ideally cache the loaded doc, but for this snippet we load it per component or cache in parent
-                        // To be efficient, we rely on pdfjs internal caching or basic buffering. 
-                        // For a split tool, generating thumbnails for potentially huge PDFs can be heavy.
-                        // We will load the document once in the parent? No, the parent has 'file' object.
-                        // Let's load just this page.
-                        
-                        // Note: Loading the whole document for every thumbnail is inefficient. 
-                        // Ideally the `pdfDoc` should be passed down or cached.
-                        // However, to keep single-file simplicity without complex contexts:
-                        const loadingTask = pdfjsLib.getDocument(new Uint8Array(arrayBuffer));
-                        const pdf = await loadingTask.promise;
+                        // Load the document from the Blob URL
+                        const loadingTask = pdfjsLib.getDocument(fileUrl);
+                        pdfDoc = await loadingTask.promise;
                         
                         if(!isMounted) return;
                         
-                        const page = await pdf.getPage(pageNum);
-                        const viewport = page.getViewport({ scale: 0.3 }); // Low scale for thumbnail
+                        const page = await pdfDoc.getPage(pageNum);
+                        
+                        // Scale: roughly 200px wide
+                        const viewport = page.getViewport({ scale: 0.3 });
                         
                         const canvas = canvasRef.current;
                         if (canvas) {
@@ -330,18 +323,19 @@
                             await page.render(renderContext).promise;
                         }
                         if(isMounted) setLoading(false);
-                        
-                        // Clean up
-                        // pdf.destroy(); 
                     } catch (err) {
-                        console.error(err);
+                        console.error("Thumbnail error:", err);
                         if(isMounted) setLoading(false);
                     }
                 };
                 
                 renderPage();
-                return () => { isMounted = false; };
-            }, [file, pageNum]);
+                
+                return () => { 
+                    isMounted = false;
+                    if(pdfDoc) pdfDoc.destroy();
+                };
+            }, [fileUrl, pageNum]);
 
             return (
                 <div 
@@ -367,29 +361,32 @@
             );
         };
 
-        // --- SPLIT TOOL MAIN COMPONENT ---
-
+        // --- MAIN APP COMPONENT ---
         const SplitTool = () => {
             const [file, setFile] = useState(null);
+            const [fileUrl, setFileUrl] = useState(null); // Blob URL for PDF.js
             const [pageCount, setPageCount] = useState(0);
-            const [status, setStatus] = useState('IDLE'); // IDLE, PROCESSING, COMPLETED, ERROR
+            const [status, setStatus] = useState('IDLE');
             const [downloadUrl, setDownloadUrl] = useState(null);
             const [downloadName, setDownloadName] = useState('');
             const fileInputRef = useRef(null);
 
             // Configuration States
-            const [mainTab, setMainTab] = useState('RANGE'); // 'RANGE' | 'EXTRACT'
-            
-            // Range Mode State
-            const [rangeMode, setRangeMode] = useState('CUSTOM'); // 'CUSTOM' | 'FIXED'
+            const [mainTab, setMainTab] = useState('RANGE'); 
+            const [rangeMode, setRangeMode] = useState('CUSTOM'); 
             const [ranges, setRanges] = useState([{ id: 1, from: 1, to: 1 }]);
             const [fixedRange, setFixedRange] = useState(1);
             const [mergeAfterRange, setMergeAfterRange] = useState(false);
-
-            // Extract Mode State
-            const [extractMode, setExtractMode] = useState('ALL'); // 'ALL' | 'SELECT'
+            const [extractMode, setExtractMode] = useState('ALL');
             const [selectedPages, setSelectedPages] = useState(new Set());
             const [mergeAfterExtract, setMergeAfterExtract] = useState(false);
+
+            // Cleanup Object URL on unmount or file change
+            useEffect(() => {
+                return () => {
+                    if (fileUrl) URL.revokeObjectURL(fileUrl);
+                };
+            }, [fileUrl]);
 
             const handleFileSelect = async (e) => {
                 if (e.target.files && e.target.files.length > 0) {
@@ -399,18 +396,29 @@
                         return;
                     }
                     try {
-                        const { pageCount } = await loadPDF(selectedFile);
+                        // Create Blob URL for fast previewing
+                        const url = URL.createObjectURL(selectedFile);
+                        setFileUrl(url);
                         setFile(selectedFile);
-                        setPageCount(pageCount);
-                        setRanges([{ id: 1, from: 1, to: pageCount }]); // Reset ranges to full doc
+
+                        // Load doc with pdf-lib to get page count efficiently
+                        const arrayBuffer = await selectedFile.arrayBuffer();
+                        const pdfDoc = await PDFDocument.load(arrayBuffer);
+                        const count = pdfDoc.getPageCount();
+                        
+                        setPageCount(count);
+                        setRanges([{ id: 1, from: 1, to: count }]);
                     } catch (err) {
+                        console.error(err);
                         alert("Failed to load PDF. It might be corrupted or password protected.");
                     }
                 }
             };
 
             const resetTool = () => {
+                if (fileUrl) URL.revokeObjectURL(fileUrl);
                 setFile(null);
+                setFileUrl(null);
                 setPageCount(0);
                 setStatus('IDLE');
                 setDownloadUrl(null);
@@ -419,6 +427,7 @@
             };
 
             const handleSplit = async () => {
+                if (!file) return;
                 setStatus('PROCESSING');
                 try {
                     let splitOptions = {};
@@ -441,9 +450,10 @@
                         }
                     }
 
+                    // Perform the split
                     const resultBlob = await splitPDF(file, splitOptions);
-                    const url = URL.createObjectURL(resultBlob);
                     
+                    const url = URL.createObjectURL(resultBlob);
                     setDownloadUrl(url);
                     setDownloadName(resultBlob.type === 'application/zip' 
                         ? 'ilovepdf_split.zip' 
@@ -456,8 +466,6 @@
                     setStatus('IDLE');
                 }
             };
-
-            // --- UI SUB-COMPONENTS ---
 
             const RangeSelector = () => {
                 const addRange = () => {
@@ -533,46 +541,7 @@
                 );
             };
 
-            const FixedSelector = () => (
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Split into page ranges of:</label>
-                        <input 
-                            type="number" 
-                            min="1" max={pageCount}
-                            value={fixedRange} 
-                            onChange={(e) => setFixedRange(e.target.value)}
-                            className="w-32 border border-gray-300 rounded px-3 py-2 focus:border-brand-red focus:outline-none"
-                        />
-                    </div>
-                    <div className="text-sm text-gray-500 bg-gray-100 p-3 rounded">
-                        This PDF will be split into files of <strong>{fixedRange}</strong> pages. <br/>
-                        <strong>{Math.ceil(pageCount / fixedRange)}</strong> PDFs will be created.
-                    </div>
-                </div>
-            );
-
-            const PageGrid = ({ file, pageCount, selectedPages, onTogglePage }) => {
-                return (
-                    <div className="p-4 h-full overflow-y-auto bg-brand-light">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-5xl mx-auto pb-20">
-                            {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => (
-                                <PDFThumb 
-                                    key={page}
-                                    file={file}
-                                    pageNum={page}
-                                    isSelected={selectedPages.has(page)}
-                                    onClick={() => onTogglePage(page)}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                );
-            };
-
-            // --- RENDER STATES ---
-
-            if (file === null) { // Landing
+            if (file === null) {
                 return (
                     <div 
                         className="flex flex-col items-center justify-center min-h-[calc(100vh-140px)] p-6"
@@ -653,15 +622,13 @@
                 );
             }
 
-            // WORKSPACE
             return (
                 <div className="flex flex-col md:flex-row tool-workspace relative">
                     
                     {/* Main Area */}
-                    <div className="flex-1 bg-gray-100 relative overflow-hidden flex flex-col">
+                    <div className="flex-1 bg-gray-100 relative overflow-hidden flex flex-col min-h-[500px]">
                         {mainTab === 'RANGE' && (
                             <div className="flex-1 flex flex-col items-center justify-center p-8">
-                                {/* Visual Representation of the File */}
                                 <div className="w-48 aspect-[3/4] bg-white shadow-xl border border-gray-200 rounded-lg flex flex-col items-center justify-center relative">
                                     <FileText size={64} className="text-brand-red mb-2" />
                                     <span className="text-sm font-bold text-gray-700 px-2 text-center break-all line-clamp-2">{file.name}</span>
@@ -677,17 +644,24 @@
                         )}
 
                         {mainTab === 'EXTRACT' && extractMode === 'SELECT' && (
-                            <PageGrid 
-                                file={file} 
-                                pageCount={pageCount} 
-                                selectedPages={selectedPages} 
-                                onTogglePage={(pageNum) => {
-                                    const newSet = new Set(selectedPages);
-                                    if (newSet.has(pageNum)) newSet.delete(pageNum);
-                                    else newSet.add(pageNum);
-                                    setSelectedPages(newSet);
-                                }} 
-                            />
+                            <div className="p-4 h-full overflow-y-auto bg-brand-light">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 max-w-5xl mx-auto pb-20">
+                                    {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => (
+                                        <PDFThumb 
+                                            key={page}
+                                            fileUrl={fileUrl}
+                                            pageNum={page}
+                                            isSelected={selectedPages.has(page)}
+                                            onClick={() => {
+                                                const newSet = new Set(selectedPages);
+                                                if (newSet.has(page)) newSet.delete(page);
+                                                else newSet.add(page);
+                                                setSelectedPages(newSet);
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         )}
 
                         {mainTab === 'EXTRACT' && extractMode === 'ALL' && (
@@ -746,7 +720,24 @@
                                         </button>
                                     </div>
 
-                                    {rangeMode === 'CUSTOM' ? <RangeSelector /> : <FixedSelector />}
+                                    {rangeMode === 'CUSTOM' ? <RangeSelector /> : (
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-semibold text-gray-700 mb-2">Split into page ranges of:</label>
+                                                <input 
+                                                    type="number" 
+                                                    min="1" max={pageCount}
+                                                    value={fixedRange} 
+                                                    onChange={(e) => setFixedRange(e.target.value)}
+                                                    className="w-32 border border-gray-300 rounded px-3 py-2 focus:border-brand-red focus:outline-none"
+                                                />
+                                            </div>
+                                            <div className="text-sm text-gray-500 bg-gray-100 p-3 rounded">
+                                                This PDF will be split into files of <strong>{fixedRange}</strong> pages. <br/>
+                                                <strong>{Math.ceil(pageCount / Math.max(1, fixedRange))}</strong> PDFs will be created.
+                                            </div>
+                                        </div>
+                                    )}
                                 </>
                             )}
 
