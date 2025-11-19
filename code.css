@@ -13341,7 +13341,7 @@ body.rtl [next-from-confirm-files-yes] {
     padding: 0;
     margin: 0;
     border: none;
-    background: rgba(0, 0, 0, 0) url(img\sprite.4.svg);
+    background: rgba(0, 0, 0, 0) url(img/sprite.4.svg);
     display: block
 }
 
