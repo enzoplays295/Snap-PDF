@@ -267,24 +267,7 @@
                                 </a>
                             ))}
                         </nav>
-                        <div className="hidden md:flex items-center gap-4">
-                            <a href="#" className="text-gray-600 hover:text-brand-red text-sm font-semibold">Login</a>
-                            <a href="#" className="bg-brand-gray text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold">Sign up</a>
-                        </div>
-                        <button className="md:hidden text-gray-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                        </button>
-                    </div>
-                    {isMenuOpen && (
-                        <div className="absolute top-[60px] left-0 w-full bg-white border-t border-gray-100 shadow-lg p-4 flex flex-col gap-4 md:hidden z-50">
-                            {TOOLS.map(tool => (
-                                <a key={tool.name} href={tool.href} className={tool.active ? 'text-brand-red font-semibold' : 'text-gray-600'}>{tool.name}</a>
-                            ))}
-                            <hr />
-                            <a href="#" className="text-gray-600 font-semibold">Login</a>
-                            <a href="#" className="bg-brand-red text-white px-4 py-3 rounded text-center font-semibold">Sign up</a>
-                        </div>
-                    )}
+                        
                 </header>
             );
         };
