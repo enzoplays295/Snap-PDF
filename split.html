@@ -107,14 +107,6 @@
         // Configure PDF.js worker
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://esm.sh/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
-        // --- CONSTANTS & UTILS ---
-        const TOOLS = [
-            { name: 'Merge PDF', href: '#' },
-            { name: 'Split PDF', href: '#', active: true },
-            { name: 'Compress PDF', href: '#' },
-            { name: 'Convert PDF', href: '#' },
-            { name: 'All PDF Tools', href: '#' },
-        ];
 
         // --- PDF SERVICE ---
         const loadPDF = async (file) => {
@@ -250,7 +242,7 @@
                                         <line x1="9" y1="15" x2="15" y2="15"></line>
                                     </svg>
                                 </div>
-                                <span className="font-bold text-xl tracking-tight text-gray-700">iLovePDF</span>
+                                <span className="font-bold text-xl tracking-tight text-gray-700">Snap PDF</span>
                             </a>
                         </div>
                         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600 uppercase">
@@ -264,24 +256,7 @@
                                 </a>
                             ))}
                         </nav>
-                        <div className="hidden md:flex items-center gap-4">
-                            <a href="#" className="text-gray-600 hover:text-brand-red text-sm font-semibold">Login</a>
-                            <a href="#" className="bg-brand-gray text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-semibold">Sign up</a>
-                        </div>
-                        <button className="md:hidden text-gray-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                        </button>
-                    </div>
-                    {isMenuOpen && (
-                        <div className="absolute top-[60px] left-0 w-full bg-white border-t border-gray-100 shadow-lg p-4 flex flex-col gap-4 md:hidden z-50">
-                            {TOOLS.map(tool => (
-                                <a key={tool.name} href={tool.href} className={tool.active ? 'text-brand-red font-semibold' : 'text-gray-600'}>{tool.name}</a>
-                            ))}
-                            <hr />
-                            <a href="#" className="text-gray-600 font-semibold">Login</a>
-                            <a href="#" className="bg-brand-red text-white px-4 py-3 rounded text-center font-semibold">Sign up</a>
-                        </div>
-                    )}
+                        
                 </header>
             );
         };
@@ -289,13 +264,7 @@
         const Footer = () => (
             <footer className="bg-white border-t border-gray-200 py-8 mt-auto">
                 <div className="container mx-auto px-4 text-center">
-                    <div className="flex flex-wrap justify-center gap-6 mb-6 text-gray-600 text-sm font-medium">
-                        <a href="#" className="hover:text-brand-red">Home</a>
-                        <a href="#" className="hover:text-brand-red">Features</a>
-                        <a href="#" className="hover:text-brand-red">Pricing</a>
-                        <a href="#" className="hover:text-brand-red">Tools</a>
-                        <a href="#" className="hover:text-brand-red">FAQ</a>
-                    </div>
+                    
                     <p className="text-gray-400 text-xs">© iLovePDF 2025 ® - Your PDF Editor</p>
                 </div>
             </footer>
