@@ -1,457 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merge PDF files online. Free service to merge PDF</title>
-    <meta name="description" content="Select multiple PDF files and merge them in seconds. Merge & combine PDF files online, easily and free." />
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-32x32.png">
-    
-    <!-- Tailwind CSS -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snap PDF - Merge PDF Files</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Babel for JSX execution in browser -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            red: '#E5322D',
-                            redHover: '#D12D28',
-                            dark: '#33333B',
-                            light: '#F5F5FA',
-                            gray: '#161616'
-                        }
-                    }
-                }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'snap-red': '#e53935',
+              'snap-red-dark': '#c62828',
+              'snap-gray': {
+                100: '#f7fafc',
+                200: '#edf2f7',
+                300: '#e2e8f0',
+                400: '#cbd5e0',
+                500: '#a0aec0',
+                600: '#718096',
+                700: '#4a5568',
+                800: '#2d3748',
+                900: '#1a202c',
+              },
             }
+          }
         }
+      }
     </script>
-    
-    <style>
-        body { background-color: #f5f5fa; }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #999; }
-        
-        /* Spinner Animation */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
-
-    <!-- Import Map for React and Libraries -->
-    <script type="importmap">
+  <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@18.2.0",
     "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0",
-    "pdf-lib": "https://esm.sh/pdf-lib@1.17.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
 </head>
-<body>
+  <body class="bg-snap-gray-100">
     <div id="root"></div>
+    <script type="module">
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
 
-    <script type="text/babel" data-type="module">
-        import React, { useState, useCallback, useRef } from 'react';
-        import ReactDOM from 'react-dom/client';
-        import { Upload, Trash2, ArrowLeft, ArrowRight, Plus, FileText, Download, Loader2, Menu, X } from 'lucide-react';
-        import { PDFDocument } from 'pdf-lib';
+// All components and logic are now in this file.
 
-        // --- PDF Service ---
-        const mergePDFs = async (files) => {
-            try {
-                const mergedPdf = await PDFDocument.create();
-                for (const pdfFile of files) {
-                    const arrayBuffer = await pdfFile.file.arrayBuffer();
-                    const pdf = await PDFDocument.load(arrayBuffer);
-                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                    copiedPages.forEach((page) => mergedPdf.addPage(page));
-                }
-                const mergedPdfBytes = await mergedPdf.save();
-                return new Blob([mergedPdfBytes], { type: 'application/pdf' });
-            } catch (error) {
-                console.error('Error merging PDFs:', error);
-                throw new Error('Failed to merge PDF files. Please ensure they are valid PDFs.');
-            }
-        };
+// --- COMPONENTS ---
 
-        // --- Components ---
+// components/Header.tsx (Simplified)
+const Header = () => {
+  return (
+    React.createElement("header", { className: "bg-white shadow-md w-full sticky top-0 z-50" },
+      React.createElement("nav", { className: "container mx-auto px-4 sm:px-6 lg:px-8" },
+        React.createElement("div", { className: "flex items-center justify-center md:justify-start h-16" },
+          React.createElement("div", { className: "flex items-center" },
+            React.createElement("a", { href: "/", className: "flex-shrink-0 flex items-center gap-2" },
+              React.createElement("svg", { className: "w-8 h-8 text-snap-red", viewBox: "0 0 24 24", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg" },
+                React.createElement("path", { fillRule: "evenodd", clipRule: "evenodd", d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.5 16.5L5 12l1.41-1.41L9.5 13.67l7.09-7.09L18 8l-8.5 8.5z" })
+              ),
+              React.createElement("span", { className: "text-2xl font-bold text-snap-gray-800" }, "Snap PDF")
+            )
+          )
+        )
+      )
+    )
+  );
+};
 
-        const Header = () => {
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
-            return (
-                <header className="bg-white shadow-sm sticky top-0 z-50 h-[60px] flex items-center">
-                    <div className="container mx-auto px-4 flex justify-between items-center h-full">
-                        <div className="flex items-center">
-                            <a href="#" className="flex items-center gap-2 text-brand-dark no-underline group">
-                                <div className="w-8 h-8 bg-brand-red rounded flex items-center justify-center text-white font-bold text-xl group-hover:bg-brand-redHover transition-colors">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                        <polyline points="14 2 14 8 20 8"></polyline>
-                                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                                    </svg>
-                                </div>
-                                <span className="font-bold text-xl tracking-tight text-gray-700">Snap PDF</span>
-                            </a>
-                        </div>
+// components/UploadScreen.tsx
+const UploadScreen = ({ onFilesSelected }) => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFileChange = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      onFilesSelected(event.target.files);
+    }
+  };
+
+  const handleDrop = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      onFilesSelected(event.dataTransfer.files);
+    }
+  }, [onFilesSelected]);
+
+  const handleDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
+
+  const handleDragEnter = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+  }, []);
+
+  return (
+    React.createElement("div", { 
+      className: `w-full max-w-4xl text-center p-8 transition-all duration-300 ${isDragging ? 'bg-red-50' : ''}`,
+      onDrop: handleDrop,
+      onDragOver: handleDragOver,
+      onDragEnter: handleDragEnter,
+      onDragLeave: handleDragLeave
+    },
+      React.createElement("h1", { className: "text-3xl md:text-4xl font-bold text-snap-gray-800" }, "Merge PDF files"),
+      React.createElement("p", { className: "text-lg text-snap-gray-600 mt-2 mb-8" }, "Combine PDFs in the order you want with the easiest PDF merger available."),
+      
+      React.createElement("div", { className: "relative inline-block" },
+        React.createElement("input", {
+          type: "file",
+          id: "file-upload",
+          multiple: true,
+          accept: ".pdf",
+          className: "absolute inset-0 w-full h-full opacity-0 cursor-pointer",
+          onChange: handleFileChange
+        }),
+        React.createElement("label", { htmlFor: "file-upload", className: "flex items-center justify-center bg-snap-red text-white text-xl font-bold px-12 py-6 rounded-lg shadow-lg cursor-pointer hover:bg-snap-red-dark transition-transform transform hover:scale-105" },
+          "Select PDF files"
+        )
+      ),
+
+      React.createElement("p", { className: "mt-6 text-snap-gray-500" }, "or drop PDFs here")
+    )
+  );
+};
+
+// components/FilePreview.tsx
+const PdfIcon = () => (
+  React.createElement("svg", { className: "w-12 h-12 text-snap-red", viewBox: "0 0 24 24", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg" },
+    React.createElement("path", { d: "M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4V8h4v12zm12-18H8v12h12V2z"}),
+    React.createElement("path", { d: "M4 6H2v14c0 1.1.9 2 2 2h14v-2-H4V6z"}),
+    React.createElement("path", { d: "M10 12.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5-1.5.67-1.5 1.5zm3.5-2.5h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zm0 4h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5z"})
+  )
+);
+
+const FilePreview = ({ file, onRemove }) => {
+  const formatBytes = (bytes, decimals = 2) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  };
+
+  return (
+    React.createElement("div", { className: "relative group border-2 border-snap-gray-200 rounded-lg p-2 flex flex-col items-center justify-center text-center aspect-w-1 aspect-h-1 h-48 hover:border-snap-red transition-all duration-200" },
+      React.createElement("button", {
+        onClick: onRemove,
+        className: "absolute -top-2 -right-2 bg-snap-red text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity z-10",
+        "aria-label": "Remove file"
+      }, "×"),
+      React.createElement("div", { className: "flex-grow flex flex-col items-center justify-center" },
+        React.createElement(PdfIcon, null)
+      ),
+      React.createElement("div", { className: "w-full mt-2" },
+        React.createElement("p", { className: "text-xs font-semibold text-snap-gray-800 truncate w-full", title: file.name }, file.name),
+        React.createElement("p", { className: "text-xs text-snap-gray-500" }, formatBytes(file.size))
+      )
+    )
+  );
+};
+
+// components/ProcessingScreen.tsx
+const ProcessingScreen = () => {
+  return (
+    React.createElement("div", { className: "flex flex-col items-center justify-center text-center p-8" },
+      React.createElement("div", { className: "animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-snap-red mb-6" }),
+      React.createElement("h2", { className: "text-2xl md:text-3xl font-bold text-snap-gray-800" }, "Merging PDFs..."),
+      React.createElement("p", { className: "text-lg text-snap-gray-600 mt-2" }, "Please wait, we are combining your files.")
+    )
+  );
+};
+
+// components/DownloadScreen.tsx
+const DownloadScreen = ({ downloadUrl, onStartOver }) => {
+  return (
+    React.createElement("div", { className: "text-center p-8" },
+      React.createElement("svg", { className: "w-16 h-16 text-green-500 mx-auto mb-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" },
+        React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" })
+      ),
+      React.createElement("h2", { className: "text-3xl md:text-4xl font-bold text-snap-gray-800" }, "PDFs have been merged!"),
+      React.createElement("p", { className: "text-lg text-snap-gray-600 mt-2 mb-8" }, "Your files have been successfully combined into a single PDF."),
+      
+      React.createElement("a", {
+        href: downloadUrl,
+        download: "snap-pdf_merged.pdf",
+        className: "inline-block bg-snap-red text-white text-xl font-bold px-12 py-6 rounded-lg shadow-lg hover:bg-snap-red-dark transition-transform transform hover:scale-105"
+      }, "Download merged PDF"),
+      
+      React.createElement("div", { className: "mt-12" },
+        React.createElement("button", { onClick: onStartOver, className: "text-snap-gray-600 hover:text-snap-red font-semibold transition-colors" }, "Merge more PDFs")
+      )
+    )
+  );
+};
+
+// App.tsx
+const App = () => {
+  const [status, setStatus] = useState('uploading');
+  const [files, setFiles] = useState([]);
+  const [mergedPdfUrl, setMergedPdfUrl] = useState(null);
+  const [error, setError] = useState(null);
+
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (mergedPdfUrl) {
+        URL.revokeObjectURL(mergedPdfUrl);
+      }
+    };
+  }, [mergedPdfUrl]);
+
+  const handleFilesSelected = (selectedFiles) => {
+    const newPdfFiles = Array.from(selectedFiles)
+      .filter(file => file.type === 'application/pdf')
+      .map(file => ({
+        id: Date.now() + Math.random(),
+        file: file,
+      }));
+
+    if (newPdfFiles.length > 0) {
+      setFiles(prevFiles => [...prevFiles, ...newPdfFiles]);
+      setStatus('editing');
+      setError(null);
+    }
+  };
+
+  const handleRemoveFile = (id) => {
+    setFiles(prevFiles => {
+      const newFiles = prevFiles.filter(f => f.id !== id);
+      if (newFiles.length === 0) {
+        setStatus('uploading');
+      }
+      return newFiles;
+    });
+  };
+
+  const handleMerge = async () => {
+    if (files.length < 2) {
+      setError('Please select at least two PDF files to merge.');
+      return;
+    }
+    setError(null);
+    setStatus('merging');
+
+    try {
+      const { PDFDocument } = window.PDFLib;
+      const mergedPdf = await PDFDocument.create();
+
+      for (const pdfFile of files) {
+        const arrayBuffer = await pdfFile.file.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        copiedPages.forEach(page => mergedPdf.addPage(page));
+      }
+
+      const mergedPdfBytes = await mergedPdf.save();
+      const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      setMergedPdfUrl(url);
+      setStatus('finished');
+    } catch (e) {
+      console.error(e);
+      setError('An error occurred while merging the PDFs. One or more files might be corrupted or password-protected.');
+      setStatus('editing');
+    }
+  };
+  
+  const handleSort = () => {
+    setFiles(prevFiles => {
+      const sortedFiles = [...prevFiles].sort((a, b) => a.file.name.localeCompare(b.file.name));
+      return sortedFiles;
+    });
+  };
+
+  const handleDragSort = () => {
+    if (dragItem.current === null || dragOverItem.current === null) return;
+    const filesCopy = [...files];
+    const dragItemContent = filesCopy.splice(dragItem.current, 1)[0];
+    filesCopy.splice(dragOverItem.current, 0, dragItemContent);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setFiles(filesCopy);
+  };
+  
+  const handleStartOver = () => {
+    setFiles([]);
+    if (mergedPdfUrl) {
+      URL.revokeObjectURL(mergedPdfUrl);
+    }
+    setMergedPdfUrl(null);
+    setError(null);
+    setStatus('uploading');
+  };
+
+  const addMoreFiles = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf';
+    input.multiple = true;
+    input.onchange = (e) => {
+        const target = e.target;
+        if (target.files) {
+            handleFilesSelected(target.files);
+        }
+    };
+    input.click();
+  };
+
+  return (
+    React.createElement("div", { className: "flex flex-col min-h-screen font-sans" },
+      React.createElement(Header, null),
+      React.createElement("main", { className: "flex-grow flex flex-col items-center justify-center p-4 md:p-8" },
+        status === 'uploading' && React.createElement(UploadScreen, { onFilesSelected: handleFilesSelected }),
         
-                        
-                        <button className="md:hidden text-gray-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                        </button>
-                    </div>
-                    {isMenuOpen && (
-                        <div className="absolute top-[60px] left-0 w-full bg-white border-t border-gray-100 shadow-lg p-4 flex flex-col gap-4 md:hidden">
-                            <a href="#" className="text-brand-red font-semibold">Merge PDF</a>
-                            <a href="#" className="text-gray-600">Split PDF</a>
-                            <a href="#" className="text-gray-600">Compress PDF</a>
-                            <hr />
-                            <a href="#" className="text-gray-600 font-semibold">Login</a>
-                            <a href="#" className="bg-brand-red text-white px-4 py-3 rounded text-center font-semibold">Sign up</a>
-                        </div>
-                    )}
-                </header>
-            );
-        };
+        status === 'editing' && (
+          React.createElement("div", { className: "w-full max-w-6xl flex flex-col md:flex-row gap-8" },
+            React.createElement("div", { className: "flex-grow bg-white p-4 sm:p-6 rounded-lg shadow-lg" },
+              error && React.createElement("div", { className: "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4", role: "alert" }, error),
+              React.createElement("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" },
+                files.map((pdfFile, index) => (
+                  React.createElement("div", {
+                    key: pdfFile.id,
+                    draggable: true,
+                    onDragStart: () => dragItem.current = index,
+                    onDragEnter: () => dragOverItem.current = index,
+                    onDragEnd: handleDragSort,
+                    onDragOver: (e) => e.preventDefault(),
+                    className: "cursor-move"
+                  },
+                    React.createElement(FilePreview, {
+                      file: pdfFile.file,
+                      onRemove: () => handleRemoveFile(pdfFile.id)
+                    })
+                  )
+                ))
+              )
+            ),
+            React.createElement("aside", { className: "w-full md:w-72 lg:w-80 flex-shrink-0" },
+              React.createElement("div", { className: "bg-white p-6 rounded-lg shadow-lg sticky top-24" },
+                React.createElement("h2", { className: "text-xl font-bold text-snap-gray-800 mb-4" }, "Merge options"),
+                React.createElement("div", { className: "space-y-4" },
+                  React.createElement("p", { className: "text-sm text-snap-gray-600" }, "To change the order of your PDFs, drag and drop the files as you want."),
+                   React.createElement("button", { onClick: handleSort, className: "w-full flex items-center justify-center gap-2 text-snap-red hover:text-snap-red-dark font-semibold py-2 px-4 border border-snap-gray-300 rounded-lg transition-colors" },
+                      React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", viewBox: "0 0 20 20", fill: "currentColor" }, React.createElement("path", { d: "M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"})),
+                      "Sort by name (A-Z)"
+                   ),
+                   React.createElement("button", { onClick: addMoreFiles, className: "w-full flex items-center justify-center gap-2 bg-white hover:bg-snap-gray-100 text-snap-red font-semibold py-3 px-4 border-2 border-snap-red rounded-lg transition-colors" },
+                     React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2 },
+                        React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M12 4v16m8-8H4" })
+                      ),
+                      "Add more files"
+                   ),
+                  React.createElement("button", { onClick: handleMerge, className: "w-full bg-snap-red hover:bg-snap-red-dark text-white font-bold py-4 px-4 rounded-lg text-lg transition-transform transform hover:scale-105" },
+                    "Merge PDF"
+                  )
+                )
+              )
+            )
+          )
+        ),
+        
+        status === 'merging' && React.createElement(ProcessingScreen, null),
+        
+        status === 'finished' && mergedPdfUrl && (
+          React.createElement(DownloadScreen, { 
+            downloadUrl: mergedPdfUrl, 
+            onStartOver: handleStartOver 
+          })
+        )
+      )
+    )
+  );
+};
 
-        const Footer = () => (
-            <footer className="bg-white border-t border-gray-200 py-8 mt-auto">
-                <div className="container mx-auto px-4 text-center">
-                    <div className="flex flex-wrap justify-center gap-6 mb-6 text-gray-600 text-sm font-medium">
-                        <a href="#" className="hover:text-brand-red">Home</a>
-                        <a href="#" className="hover:text-brand-red">Features</a>
-                        <a href="#" className="hover:text-brand-red">Pricing</a>
-                        <a href="#" className="hover:text-brand-red">Tools</a>
-                        <a href="#" className="hover:text-brand-red">FAQ</a>
-                    </div>
-                    <p className="text-gray-400 text-xs">© iLovePDF 2025 ® - Your PDF Editor</p>
-                </div>
-            </footer>
-        );
 
-        const MergeTool = () => {
-            const [files, setFiles] = useState([]);
-            const [status, setStatus] = useState('IDLE'); // IDLE, PROCESSING, COMPLETED, ERROR
-            const [downloadUrl, setDownloadUrl] = useState(null);
-            const fileInputRef = useRef(null);
-            const [isDragging, setIsDragging] = useState(false);
+// index.tsx
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
 
-            const handleFileSelect = (e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                    processFiles(Array.from(e.target.files));
-                }
-                if (fileInputRef.current) fileInputRef.current.value = '';
-            };
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  React.createElement(React.StrictMode, null, React.createElement(App, null))
+);
 
-            const processFiles = (newFiles) => {
-                const pdfFiles = newFiles
-                    .filter(file => file.type === 'application/pdf')
-                    .map(file => ({
-                        id: Math.random().toString(36).substr(2, 9),
-                        file
-                    }));
-                
-                if (pdfFiles.length === 0 && newFiles.length > 0) {
-                    alert("Please select valid PDF files.");
-                    return;
-                }
-                if (pdfFiles.length === 0) return;
-
-                setFiles(prev => [...prev, ...pdfFiles]);
-            };
-
-            const handleDragOver = useCallback((e) => {
-                e.preventDefault();
-                setIsDragging(true);
-            }, []);
-
-            const handleDragLeave = useCallback((e) => {
-                e.preventDefault();
-                setIsDragging(false);
-            }, []);
-
-            const handleDrop = useCallback((e) => {
-                e.preventDefault();
-                setIsDragging(false);
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    processFiles(Array.from(e.dataTransfer.files));
-                }
-            }, []);
-
-            const removeFile = (id, e) => {
-                e.stopPropagation();
-                setFiles(prev => prev.filter(f => f.id !== id));
-            };
-
-            const moveFile = (e, index, direction) => {
-                e.stopPropagation();
-                e.preventDefault();
-
-                if (direction === 'left' && index === 0) return;
-                if (direction === 'right' && index === files.length - 1) return;
-
-                setFiles(prevFiles => {
-                    const newFiles = [...prevFiles];
-                    const targetIndex = direction === 'left' ? index - 1 : index + 1;
-                    
-                    // Swap
-                    const temp = newFiles[index];
-                    newFiles[index] = newFiles[targetIndex];
-                    newFiles[targetIndex] = temp;
-                    
-                    return newFiles;
-                });
-            };
-
-            const handleMerge = async () => {
-                setStatus('PROCESSING');
-                try {
-                    const mergedBlob = await mergePDFs(files);
-                    const url = URL.createObjectURL(mergedBlob);
-                    setDownloadUrl(url);
-                    setStatus('COMPLETED');
-                } catch (error) {
-                    console.error(error);
-                    setStatus('ERROR');
-                    alert("An error occurred while merging files.");
-                    setStatus('IDLE');
-                }
-            };
-
-            const resetTool = () => {
-                setFiles([]);
-                setStatus('IDLE');
-                setDownloadUrl(null);
-            };
-
-            // View: Empty State
-            if (files.length === 0) {
-                return (
-                    <div 
-                        className={`flex flex-col items-center justify-center min-h-[calc(100vh-140px)] p-6 transition-colors duration-300 ${isDragging ? 'bg-red-50 ring-4 ring-brand-red ring-opacity-20' : ''}`}
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                    >
-                        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4 text-center leading-tight">
-                            Merge PDF files
-                        </h1>
-                        <h2 className="text-lg md:text-xl text-gray-500 mb-10 text-center max-w-2xl font-light">
-                            Combine PDFs in the order you want with the easiest PDF merger available.
-                        </h2>
-
-                        <div className="relative">
-                            <button 
-                                onClick={() => fileInputRef.current?.click()}
-                                className="bg-brand-red hover:bg-brand-redHover text-white text-xl md:text-2xl font-bold py-6 px-12 md:px-16 rounded-lg shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center gap-4"
-                            >
-                                Select PDF files
-                            </button>
-                            <p className="text-gray-400 text-sm mt-4 text-center">or drop PDFs here</p>
-                        </div>
-                        
-                        <input 
-                            type="file" 
-                            ref={fileInputRef}
-                            onChange={handleFileSelect}
-                            className="hidden"
-                            multiple
-                            accept=".pdf"
-                        />
-                    </div>
-                );
-            }
-
-            // View: Processing / Completed
-            if (status === 'PROCESSING' || status === 'COMPLETED') {
-                return (
-                    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-140px)] p-6 text-center">
-                        {status === 'PROCESSING' ? (
-                        <>
-                            <div className="animate-spin text-brand-red mb-6">
-                                <Loader2 size={64} />
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-800">Merging PDFs...</h2>
-                            <p className="text-gray-500 mt-2">Please wait while we process your files.</p>
-                        </>
-                        ) : (
-                            <>
-                                <div className="w-20 h-20 bg-brand-red rounded-full flex items-center justify-center text-white mb-6 shadow-lg">
-                                    <Download size={40} />
-                                </div>
-                                <h2 className="text-3xl font-bold text-gray-800 mb-2">PDFs have been merged!</h2>
-                                <p className="text-gray-500 mb-8 max-w-md">
-                                    Your merged PDF is ready for download.
-                                </p>
-                                
-                                <div className="flex gap-4 flex-col sm:flex-row">
-                                    <a 
-                                        href={downloadUrl} 
-                                        download="ilovepdf_merged.pdf"
-                                        className="bg-brand-red hover:bg-brand-redHover text-white text-lg font-bold py-4 px-10 rounded shadow-lg transition-colors inline-flex items-center justify-center gap-2"
-                                    >
-                                        <Download size={20} />
-                                        Download Merged PDF
-                                    </a>
-                                    <button 
-                                        onClick={resetTool}
-                                        className="bg-gray-200 hover:bg-gray-300 text-gray-700 text-lg font-bold py-4 px-10 rounded shadow transition-colors"
-                                    >
-                                        Merge more PDFs
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                );
-            }
-
-            // View: Workspace
-            return (
-                <div className="flex flex-col h-[calc(100vh-60px)]">
-                    {/* Scrollable Area */}
-                    <div className="flex-1 bg-brand-light overflow-y-auto p-4 md:p-8 relative">
-                        
-                        {/* Floating Counter */}
-                        <div className="flex justify-center mb-8">
-                            <div className="inline-flex bg-white rounded-full shadow px-6 py-2 items-center gap-2 text-sm font-medium text-gray-600">
-                                <span className="text-brand-red font-bold">{files.length}</span> files selected
-                            </div>
-                        </div>
-
-                        {/* Grid */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 max-w-7xl mx-auto pb-24">
-                            {files.map((pdf, index) => (
-                                <div key={pdf.id} className="group relative aspect-[3/4] bg-white rounded shadow-sm hover:shadow-md border border-transparent hover:border-gray-300 transition-all flex flex-col select-none">
-                                    
-                                    {/* Card Preview */}
-                                    <div className="flex-1 flex items-center justify-center bg-gray-50 m-2 rounded border border-gray-100 relative overflow-hidden">
-                                        <FileText size={48} className="text-gray-300" />
-                                        
-                                        {/* Hover Overlay for Arrows */}
-                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all" />
-                                        
-                                        {/* Arrows Container */}
-                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2 z-10">
-                                            <button 
-                                                onClick={(e) => moveFile(e, index, 'left')}
-                                                disabled={index === 0}
-                                                className="p-2 bg-gray-800 text-white rounded-full hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors transform hover:scale-110 active:scale-95 shadow-sm"
-                                                title="Move Left"
-                                                type="button"
-                                            >
-                                                <ArrowLeft size={16} />
-                                            </button>
-                                            <button 
-                                                onClick={(e) => moveFile(e, index, 'right')}
-                                                disabled={index === files.length - 1}
-                                                className="p-2 bg-gray-800 text-white rounded-full hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors transform hover:scale-110 active:scale-95 shadow-sm"
-                                                title="Move Right"
-                                                type="button"
-                                            >
-                                                <ArrowRight size={16} />
-                                            </button>
-                                        </div>
-                                        
-                                        {/* Delete Button (Top Right) */}
-                                        <button 
-                                            onClick={(e) => removeFile(pdf.id, e)}
-                                            className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-all shadow-sm z-20"
-                                            title="Remove file"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </div>
-                                    
-                                    <div className="px-3 pb-3 text-center">
-                                        <p className="text-xs text-gray-600 truncate font-medium" title={pdf.file.name}>
-                                            {pdf.file.name}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-
-                            {/* Add More Button */}
-                            <div 
-                                onClick={() => fileInputRef.current?.click()}
-                                className="aspect-[3/4] border-2 border-dashed border-gray-300 rounded flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-brand-red hover:text-brand-red text-gray-400 transition-all"
-                            >
-                                <Plus size={40} className="mb-2" />
-                                <span className="text-sm font-semibold">Add more</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Bottom Bar */}
-                    <div className="h-24 bg-white border-t border-gray-200 flex items-center justify-between px-4 md:px-8 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-40">
-                        <div className="hidden md:block">
-                            <button 
-                                onClick={resetTool}
-                                className="text-gray-500 hover:text-brand-red font-medium text-sm"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-
-                        <div className="flex-1 md:flex-none flex justify-center md:justify-end w-full">
-                            <button 
-                                onClick={handleMerge}
-                                disabled={files.length < 2}
-                                className={`text-white text-xl font-bold py-3 px-12 rounded-lg shadow-md transition-all w-full md:w-auto flex items-center justify-center gap-3 ${files.length < 2 ? 'bg-gray-400 cursor-not-allowed' : 'bg-brand-red hover:bg-brand-redHover'}`}
-                            >
-                                Merge PDF <ArrowRight size={20} />
-                            </button>
-                        </div>
-                    </div>
-
-                    <input 
-                        type="file" 
-                        ref={fileInputRef}
-                        onChange={handleFileSelect}
-                        className="hidden"
-                        multiple
-                        accept=".pdf"
-                    />
-                </div>
-            );
-        };
-
-        const App = () => {
-            return (
-                <div className="flex flex-col min-h-screen font-sans text-brand-gray">
-                    <Header />
-                    <main className="flex-1 flex flex-col">
-                        <MergeTool />
-                    </main>
-                    <Footer />
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(
-            <React.StrictMode>
-                <App />
-            </React.StrictMode>
-        );
     </script>
-</body>
+  </body>
 </html>
