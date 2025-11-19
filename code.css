@@ -250,7 +250,7 @@ html input[type=button],
 input[type=reset],
 input[type=submit] {
     cursor: pointer;
-    -webkit-appearance: button
+  
 }
 
 :focus {
@@ -435,7 +435,7 @@ button {
 [type=submit],
 button {
     cursor: pointer;
-    -webkit-appearance: button
+    
 }
 
 [disabled] {
@@ -475,14 +475,10 @@ textarea {
     resize: vertical
 }
 
-[type=search] {
-    -webkit-appearance: textfield
-}
+
 
 [type=search]::-webkit-search-cancel-button,
-[type=search]::-webkit-search-decoration {
-    -webkit-appearance: none
-}
+
 
 table {
     border-collapse: collapse;
@@ -1110,7 +1106,7 @@ button.toast-close-button {
     cursor: pointer;
     background: rgba(0, 0, 0, 0);
     border: 0;
-    -webkit-appearance: none
+    
 }
 
 .toast-top-center {
@@ -13372,7 +13368,7 @@ body.rtl [next-from-confirm-files-yes] {
     padding: 0;
     margin: 0;
     border: none;
-    background: rgba(0, 0, 0, 0) url(/img/icons/sprite.4.svg);
+    background: rgba(0, 0, 0, 0) url(sprite.4.svg);
     display: block
 }
 
