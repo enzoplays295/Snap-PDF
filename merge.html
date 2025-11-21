@@ -5,401 +5,321 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snap PDF - Merge PDF Files</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- pdf-lib for client-side PDF manipulation -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              'snap-red': '#e53935',
-              'snap-red-dark': '#c62828',
-              'snap-gray': {
-                100: '#f7fafc',
-                200: '#edf2f7',
-                300: '#e2e8f0',
-                400: '#cbd5e0',
-                500: '#a0aec0',
-                600: '#718096',
-                700: '#4a5568',
-                800: '#2d3748',
-                900: '#1a202c',
-              },
-            }
-          }
-        }
-      }
-    </script>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/"
-  }
-}
-</script>
-</head>
-  <body class="bg-snap-gray-100">
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel for JSX transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-gray-50">
     <div id="root"></div>
-    <script type="module">
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
+    <script type="text/babel">
+      const { useState, useRef, useCallback } = React;
 
-// All components and logic are now in this file.
+      // PDF Merging Service Logic
+      const mergePdfs = async (files) => {
+        const { PDFDocument } = window.PDFLib;
+        const mergedPdf = await PDFDocument.create();
 
-// --- COMPONENTS ---
-
-// components/Header.tsx (Simplified)
-const Header = () => {
-  return (
-    React.createElement("header", { className: "bg-white shadow-md w-full sticky top-0 z-50" },
-      React.createElement("nav", { className: "container mx-auto px-4 sm:px-6 lg:px-8" },
-        React.createElement("div", { className: "flex items-center justify-center md:justify-start h-16" },
-          React.createElement("div", { className: "flex items-center" },
-            React.createElement("a", { href: "/", className: "flex-shrink-0 flex items-center gap-2" },
-              React.createElement("svg", { className: "w-8 h-8 text-snap-red", viewBox: "0 0 24 24", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg" },
-                React.createElement("path", { fillRule: "evenodd", clipRule: "evenodd", d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.5 16.5L5 12l1.41-1.41L9.5 13.67l7.09-7.09L18 8l-8.5 8.5z" })
-              ),
-              React.createElement("span", { className: "text-2xl font-bold text-snap-gray-800" }, "Snap PDF")
-            )
-          )
-        )
-      )
-    )
-  );
-};
-
-// components/UploadScreen.tsx
-const UploadScreen = ({ onFilesSelected }) => {
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handleFileChange = (event) => {
-    if (event.target.files && event.target.files.length > 0) {
-      onFilesSelected(event.target.files);
-    }
-  };
-
-  const handleDrop = useCallback((event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(false);
-    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      onFilesSelected(event.dataTransfer.files);
-    }
-  }, [onFilesSelected]);
-
-  const handleDragOver = useCallback((event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  }, []);
-
-  const handleDragEnter = useCallback((event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(false);
-  }, []);
-
-  return (
-    React.createElement("div", { 
-      className: `w-full max-w-4xl text-center p-8 transition-all duration-300 ${isDragging ? 'bg-red-50' : ''}`,
-      onDrop: handleDrop,
-      onDragOver: handleDragOver,
-      onDragEnter: handleDragEnter,
-      onDragLeave: handleDragLeave
-    },
-      React.createElement("h1", { className: "text-3xl md:text-4xl font-bold text-snap-gray-800" }, "Merge PDF files"),
-      React.createElement("p", { className: "text-lg text-snap-gray-600 mt-2 mb-8" }, "Combine PDFs in the order you want with the easiest PDF merger available."),
-      
-      React.createElement("div", { className: "relative inline-block" },
-        React.createElement("input", {
-          type: "file",
-          id: "file-upload",
-          multiple: true,
-          accept: ".pdf",
-          className: "absolute inset-0 w-full h-full opacity-0 cursor-pointer",
-          onChange: handleFileChange
-        }),
-        React.createElement("label", { htmlFor: "file-upload", className: "flex items-center justify-center bg-snap-red text-white text-xl font-bold px-12 py-6 rounded-lg shadow-lg cursor-pointer hover:bg-snap-red-dark transition-transform transform hover:scale-105" },
-          "Select PDF files"
-        )
-      ),
-
-      React.createElement("p", { className: "mt-6 text-snap-gray-500" }, "or drop PDFs here")
-    )
-  );
-};
-
-// components/FilePreview.tsx
-const PdfIcon = () => (
-  React.createElement("svg", { className: "w-12 h-12 text-snap-red", viewBox: "0 0 24 24", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg" },
-    React.createElement("path", { d: "M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4V8h4v12zm12-18H8v12h12V2z"}),
-    React.createElement("path", { d: "M4 6H2v14c0 1.1.9 2 2 2h14v-2-H4V6z"}),
-    React.createElement("path", { d: "M10 12.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5-.67-1.5-1.5-1.5-1.5.67-1.5 1.5zm3.5-2.5h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5zm0 4h-3c-.28 0-.5.22-.5.5s.22.5.5.5h3c.28 0 .5-.22.5-.5s-.22-.5-.5-.5z"})
-  )
-);
-
-const FilePreview = ({ file, onRemove }) => {
-  const formatBytes = (bytes, decimals = 2) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  };
-
-  return (
-    React.createElement("div", { className: "relative group border-2 border-snap-gray-200 rounded-lg p-2 flex flex-col items-center justify-center text-center aspect-w-1 aspect-h-1 h-48 hover:border-snap-red transition-all duration-200" },
-      React.createElement("button", {
-        onClick: onRemove,
-        className: "absolute -top-2 -right-2 bg-snap-red text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity z-10",
-        "aria-label": "Remove file"
-      }, "×"),
-      React.createElement("div", { className: "flex-grow flex flex-col items-center justify-center" },
-        React.createElement(PdfIcon, null)
-      ),
-      React.createElement("div", { className: "w-full mt-2" },
-        React.createElement("p", { className: "text-xs font-semibold text-snap-gray-800 truncate w-full", title: file.name }, file.name),
-        React.createElement("p", { className: "text-xs text-snap-gray-500" }, formatBytes(file.size))
-      )
-    )
-  );
-};
-
-// components/ProcessingScreen.tsx
-const ProcessingScreen = () => {
-  return (
-    React.createElement("div", { className: "flex flex-col items-center justify-center text-center p-8" },
-      React.createElement("div", { className: "animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-snap-red mb-6" }),
-      React.createElement("h2", { className: "text-2xl md:text-3xl font-bold text-snap-gray-800" }, "Merging PDFs..."),
-      React.createElement("p", { className: "text-lg text-snap-gray-600 mt-2" }, "Please wait, we are combining your files.")
-    )
-  );
-};
-
-// components/DownloadScreen.tsx
-const DownloadScreen = ({ downloadUrl, onStartOver }) => {
-  return (
-    React.createElement("div", { className: "text-center p-8" },
-      React.createElement("svg", { className: "w-16 h-16 text-green-500 mx-auto mb-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" },
-        React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" })
-      ),
-      React.createElement("h2", { className: "text-3xl md:text-4xl font-bold text-snap-gray-800" }, "PDFs have been merged!"),
-      React.createElement("p", { className: "text-lg text-snap-gray-600 mt-2 mb-8" }, "Your files have been successfully combined into a single PDF."),
-      
-      React.createElement("a", {
-        href: downloadUrl,
-        download: "snap-pdf_merged.pdf",
-        className: "inline-block bg-snap-red text-white text-xl font-bold px-12 py-6 rounded-lg shadow-lg hover:bg-snap-red-dark transition-transform transform hover:scale-105"
-      }, "Download merged PDF"),
-      
-      React.createElement("div", { className: "mt-12" },
-        React.createElement("button", { onClick: onStartOver, className: "text-snap-gray-600 hover:text-snap-red font-semibold transition-colors" }, "Merge more PDFs")
-      )
-    )
-  );
-};
-
-// App.tsx
-const App = () => {
-  const [status, setStatus] = useState('uploading');
-  const [files, setFiles] = useState([]);
-  const [mergedPdfUrl, setMergedPdfUrl] = useState(null);
-  const [error, setError] = useState(null);
-
-  const dragItem = useRef(null);
-  const dragOverItem = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      if (mergedPdfUrl) {
-        URL.revokeObjectURL(mergedPdfUrl);
-      }
-    };
-  }, [mergedPdfUrl]);
-
-  const handleFilesSelected = (selectedFiles) => {
-    const newPdfFiles = Array.from(selectedFiles)
-      .filter(file => file.type === 'application/pdf')
-      .map(file => ({
-        id: Date.now() + Math.random(),
-        file: file,
-      }));
-
-    if (newPdfFiles.length > 0) {
-      setFiles(prevFiles => [...prevFiles, ...newPdfFiles]);
-      setStatus('editing');
-      setError(null);
-    }
-  };
-
-  const handleRemoveFile = (id) => {
-    setFiles(prevFiles => {
-      const newFiles = prevFiles.filter(f => f.id !== id);
-      if (newFiles.length === 0) {
-        setStatus('uploading');
-      }
-      return newFiles;
-    });
-  };
-
-  const handleMerge = async () => {
-    if (files.length < 2) {
-      setError('Please select at least two PDF files to merge.');
-      return;
-    }
-    setError(null);
-    setStatus('merging');
-
-    try {
-      const { PDFDocument } = window.PDFLib;
-      const mergedPdf = await PDFDocument.create();
-
-      for (const pdfFile of files) {
-        const arrayBuffer = await pdfFile.file.arrayBuffer();
-        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        copiedPages.forEach(page => mergedPdf.addPage(page));
-      }
-
-      const mergedPdfBytes = await mergedPdf.save();
-      const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      setMergedPdfUrl(url);
-      setStatus('finished');
-    } catch (e) {
-      console.error(e);
-      setError('An error occurred while merging the PDFs. One or more files might be corrupted or password-protected.');
-      setStatus('editing');
-    }
-  };
-  
-  const handleSort = () => {
-    setFiles(prevFiles => {
-      const sortedFiles = [...prevFiles].sort((a, b) => a.file.name.localeCompare(b.file.name));
-      return sortedFiles;
-    });
-  };
-
-  const handleDragSort = () => {
-    if (dragItem.current === null || dragOverItem.current === null) return;
-    const filesCopy = [...files];
-    const dragItemContent = filesCopy.splice(dragItem.current, 1)[0];
-    filesCopy.splice(dragOverItem.current, 0, dragItemContent);
-    dragItem.current = null;
-    dragOverItem.current = null;
-    setFiles(filesCopy);
-  };
-  
-  const handleStartOver = () => {
-    setFiles([]);
-    if (mergedPdfUrl) {
-      URL.revokeObjectURL(mergedPdfUrl);
-    }
-    setMergedPdfUrl(null);
-    setError(null);
-    setStatus('uploading');
-  };
-
-  const addMoreFiles = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.pdf';
-    input.multiple = true;
-    input.onchange = (e) => {
-        const target = e.target;
-        if (target.files) {
-            handleFilesSelected(target.files);
+        for (const pdfFile of files) {
+          const arrayBuffer = await pdfFile.file.arrayBuffer();
+          // Load a PDFDocument from the ArrayBuffer, ignoring minor errors
+          const pdfToMerge = await PDFDocument.load(arrayBuffer, {
+            ignoreEncryption: true 
+          });
+          
+          const pageIndices = pdfToMerge.getPageIndices();
+          const copiedPages = await mergedPdf.copyPages(pdfToMerge, pageIndices);
+          copiedPages.forEach((page) => {
+            mergedPdf.addPage(page);
+          });
         }
-    };
-    input.click();
-  };
 
-  return (
-    React.createElement("div", { className: "flex flex-col min-h-screen font-sans" },
-      React.createElement(Header, null),
-      React.createElement("main", { className: "flex-grow flex flex-col items-center justify-center p-4 md:p-8" },
-        status === 'uploading' && React.createElement(UploadScreen, { onFilesSelected: handleFilesSelected }),
+        const mergedPdfBytes = await mergedPdf.save();
+        return new Blob([mergedPdfBytes], { type: 'application/pdf' });
+      };
+
+      // --- React Components ---
+
+      const FileIcon = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+        </svg>
+      );
+
+      const Header = () => (
+        <header className="bg-white shadow-sm w-full py-4 px-6 sticky top-0 z-30">
+          <div className="container mx-auto">
+            <h1 className="text-2xl font-bold text-red-600">Snap PDF</h1>
+          </div>
+        </header>
+      );
+
+      const FilePreviewCard = ({
+        pdfFile,
+        onRemove,
+        index,
+        onDragStart,
+        onDragEnter,
+        onDragEnd,
+        isDragging,
+      }) => {
+        const handleDragStart = (e) => {
+          e.dataTransfer.effectAllowed = 'move';
+          onDragStart(index);
+        };
         
-        status === 'editing' && (
-          React.createElement("div", { className: "w-full max-w-6xl flex flex-col md:flex-row gap-8" },
-            React.createElement("div", { className: "flex-grow bg-white p-4 sm:p-6 rounded-lg shadow-lg" },
-              error && React.createElement("div", { className: "bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4", role: "alert" }, error),
-              React.createElement("div", { className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4" },
-                files.map((pdfFile, index) => (
-                  React.createElement("div", {
-                    key: pdfFile.id,
-                    draggable: true,
-                    onDragStart: () => dragItem.current = index,
-                    onDragEnter: () => dragOverItem.current = index,
-                    onDragEnd: handleDragSort,
-                    onDragOver: (e) => e.preventDefault(),
-                    className: "cursor-move"
-                  },
-                    React.createElement(FilePreview, {
-                      file: pdfFile.file,
-                      onRemove: () => handleRemoveFile(pdfFile.id)
-                    })
-                  )
-                ))
-              )
-            ),
-            React.createElement("aside", { className: "w-full md:w-72 lg:w-80 flex-shrink-0" },
-              React.createElement("div", { className: "bg-white p-6 rounded-lg shadow-lg sticky top-24" },
-                React.createElement("h2", { className: "text-xl font-bold text-snap-gray-800 mb-4" }, "Merge options"),
-                React.createElement("div", { className: "space-y-4" },
-                  React.createElement("p", { className: "text-sm text-snap-gray-600" }, "To change the order of your PDFs, drag and drop the files as you want."),
-                   React.createElement("button", { onClick: handleSort, className: "w-full flex items-center justify-center gap-2 text-snap-red hover:text-snap-red-dark font-semibold py-2 px-4 border border-snap-gray-300 rounded-lg transition-colors" },
-                      React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", viewBox: "0 0 20 20", fill: "currentColor" }, React.createElement("path", { d: "M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"})),
-                      "Sort by name (A-Z)"
-                   ),
-                   React.createElement("button", { onClick: addMoreFiles, className: "w-full flex items-center justify-center gap-2 bg-white hover:bg-snap-gray-100 text-snap-red font-semibold py-3 px-4 border-2 border-snap-red rounded-lg transition-colors" },
-                     React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor", strokeWidth: 2 },
-                        React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M12 4v16m8-8H4" })
-                      ),
-                      "Add more files"
-                   ),
-                  React.createElement("button", { onClick: handleMerge, className: "w-full bg-snap-red hover:bg-snap-red-dark text-white font-bold py-4 px-4 rounded-lg text-lg transition-transform transform hover:scale-105" },
-                    "Merge PDF"
-                  )
-                )
-              )
-            )
-          )
-        ),
+        const handleDragEnter = () => {
+          onDragEnter(index);
+        };
+
+        return (
+          <div
+            draggable
+            onDragStart={handleDragStart}
+            onDragEnter={handleDragEnter}
+            onDragEnd={onDragEnd}
+            onDragOver={(e) => e.preventDefault()}
+            className={`relative group bg-white border rounded-lg p-4 flex flex-col items-center justify-center text-center shadow-sm transition-all duration-300 transform hover:scale-105 cursor-grab w-48 h-56 ${isDragging ? 'opacity-50 scale-95 border-red-500 ring-2 ring-red-500' : 'opacity-100'}`}
+          >
+            <button
+              onClick={() => onRemove(pdfFile.id)}
+              className="absolute top-2 right-2 bg-gray-700 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-600"
+              aria-label={`Remove ${pdfFile.name}`}
+            >
+              <span className="text-lg leading-none">&times;</span>
+            </button>
+            <FileIcon />
+            <p className="mt-2 text-sm font-medium text-gray-700 break-words w-full px-2">
+              {pdfFile.name}
+            </p>
+            <div className="absolute bottom-2 left-2 text-sm text-white bg-gray-800 rounded-full w-7 h-7 flex items-center justify-center font-bold">
+              {index + 1}
+            </div>
+          </div>
+        );
+      };
+
+      const FileDropzone = ({ onFilesAdded }) => {
+        const [isDragging, setIsDragging] = useState(false);
+        const fileInputRef = useRef(null);
+
+        const handleDragOver = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(true);
+        };
+
+        const handleDragLeave = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(false);
+        };
+
+        const handleDrop = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(false);
+          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            onFilesAdded(e.dataTransfer.files);
+          }
+        };
+
+        const handleFileChange = (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            onFilesAdded(e.target.files);
+          }
+        };
+
+        const onButtonClick = () => {
+          fileInputRef.current?.click();
+        };
+
+        return (
+          <div
+            className={`flex flex-col items-center justify-center text-center p-8 border-4 border-dashed rounded-xl transition-colors duration-300 ${isDragging ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <h2 className="text-4xl font-extrabold mb-2 text-gray-800">Merge PDF files</h2>
+            <p className="text-gray-500 mb-8 max-w-md">Combine PDFs in the order you want with the easiest PDF merger available.</p>
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf"
+              multiple
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <button
+              onClick={onButtonClick}
+              className="bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg hover:bg-red-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-300"
+            >
+              Select PDF files
+            </button>
+            <p className="mt-4 text-gray-500">or drop PDFs here</p>
+          </div>
+        );
+      };
+
+      const App = () => {
+        const [pdfFiles, setPdfFiles] = useState([]);
+        const [isLoading, setIsLoading] = useState(false);
+        const [error, setError] = useState(null);
+
+        const dragItem = useRef(null);
+        const dragOverItem = useRef(null);
+
+        const handleFilesAdded = useCallback((files) => {
+          setError(null);
+          const newFiles = Array.from(files)
+            .filter(file => file.type === 'application/pdf')
+            .map(file => ({
+              id: `${file.name}-${file.lastModified}-${Math.random()}`,
+              file,
+              name: file.name,
+            }));
+          
+          if (newFiles.length > 0) {
+              setPdfFiles(prevFiles => [...prevFiles, ...newFiles]);
+          }
+        }, []);
+
+        const handleRemoveFile = useCallback((id) => {
+          setPdfFiles(prevFiles => prevFiles.filter(file => file.id !== id));
+        }, []);
+
+        const handleDragStart = (index) => {
+          dragItem.current = index;
+        };
+
+        const handleDragEnter = (index) => {
+          dragOverItem.current = index;
+        };
         
-        status === 'merging' && React.createElement(ProcessingScreen, null),
+        const handleDragEnd = () => {
+          if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+              const filesCopy = [...pdfFiles];
+              const draggedItemContent = filesCopy.splice(dragItem.current, 1)[0];
+              filesCopy.splice(dragOverItem.current, 0, draggedItemContent);
+              setPdfFiles(filesCopy);
+          }
+          dragItem.current = null;
+          dragOverItem.current = null;
+        };
         
-        status === 'finished' && mergedPdfUrl && (
-          React.createElement(DownloadScreen, { 
-            downloadUrl: mergedPdfUrl, 
-            onStartOver: handleStartOver 
-          })
-        )
-      )
-    )
-  );
-};
+        const handleMerge = async () => {
+          if (pdfFiles.length < 2) {
+            setError("Please select at least two PDF files to merge.");
+            return;
+          }
+          setIsLoading(true);
+          setError(null);
+          try {
+            const mergedPdfBlob = await mergePdfs(pdfFiles);
+            const url = URL.createObjectURL(mergedPdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'snap_pdf_merged.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            setPdfFiles([]);
+          } catch (e) {
+            console.error("Failed to merge PDFs:", e);
+            setError("An error occurred while merging the PDFs. Please make sure they are valid PDF files and not password protected.");
+          } finally {
+            setIsLoading(false);
+          }
+        };
+        
+        const handleAddMoreFiles = () => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.pdf';
+          input.multiple = true;
+          input.onchange = (e) => {
+              const target = e.target;
+              if (target.files) {
+                  handleFilesAdded(target.files);
+              }
+          };
+          input.click();
+        };
 
+        return (
+          <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
+            <Header />
+            <main className="flex-grow container mx-auto p-4 md:p-8 flex flex-col items-center">
+              {pdfFiles.length === 0 ? (
+                <div className="w-full max-w-4xl mt-10">
+                  <FileDropzone onFilesAdded={handleFilesAdded} />
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-wrap justify-center gap-6 p-4 mb-32 w-full">
+                    {pdfFiles.map((pdfFile, index) => (
+                      <FilePreviewCard
+                        key={pdfFile.id}
+                        pdfFile={pdfFile}
+                        onRemove={handleRemoveFile}
+                        index={index}
+                        onDragStart={handleDragStart}
+                        onDragEnter={handleDragEnter}
+                        onDragEnd={handleDragEnd}
+                        isDragging={dragItem.current === index}
+                      />
+                    ))}
+                    <div className="w-48 h-56 flex items-center justify-center">
+                       <button 
+                          onClick={handleAddMoreFiles}
+                          className="w-24 h-24 bg-white border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center text-gray-400 hover:border-red-500 hover:text-red-500 transition-all duration-300"
+                          aria-label="Add more files"
+                       >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                          </svg>
+                       </button>
+                    </div>
+                  </div>
+                  
+                  <div className="fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-20">
+                    <div className="container mx-auto flex flex-col items-center justify-center">
+                       {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+                      <button
+                        onClick={handleMerge}
+                        disabled={isLoading || pdfFiles.length < 2}
+                        className="bg-red-600 text-white font-bold py-4 px-16 rounded-lg text-xl shadow-lg hover:bg-red-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-300 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
+                      >
+                        {isLoading ? 'Merging...' : `Merge PDF files`}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </main>
+          </div>
+        );
+      };
 
-// index.tsx
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
+      // --- Application Entry Point ---
+      
+      const rootElement = document.getElementById('root');
+      if (!rootElement) {
+        throw new Error("Could not find root element to mount to");
+      }
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  React.createElement(React.StrictMode, null, React.createElement(App, null))
-);
-
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      );
     </script>
   </body>
 </html>
